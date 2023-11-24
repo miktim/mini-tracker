@@ -5,10 +5,10 @@ the tracker is carried out by exchanging messages in JSON format via webview,
 websocket or JavaScript API.
 
 Run demo (the wonderful ideal world): 
-  https://miktim.github.io/mini-tracker-03/tracker?mode=demo&track=15:30
+  https://miktim.github.io/literadar-mini-tracker/tracker?mode=demo&track=15:30
 
 Track your own location:
-  https://miktim.github.io/mini-tracker-03/tracker?mode=watch&watch=3
+  https://miktim.github.io/literadar-mini-tracker/tracker?mode=watch&watch=3
 
 URL search parameters (optional):
   mode  (mode=nowatch)
