@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!-- LiteRadar Leaflet mini tracker, MIT (c) 2019-2023 miktim@mail.ru -->
+<html>
+    <head>
+        <title>LiteRadar tracker</title>
+        <link rel="icon" type="image/png" href="./images/tracker.png">
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+
+        <link rel="stylesheet" href="./tracker.css">
+        <!-- https://github.com/richtr/NoSleep.js -->
+        <script src="./libs/nosleep.min.js"></script>
+    </head>
+    <body  onload="tracker.load('map');">
+        <div id="map" style="height: 100%; width: 100%; position: absolute; top:0; left:0"> 
+        </div>
+        <script type="text/javascript">
+            {
+                var appendBodyScript = function (src, type = "text/javascript") {
+                    var script = document.createElement("script");
+                    script.type = type;
+                    script.src = src;
+                    script.defer = false;
+                    script.async = false;
+                    document.body.appendChild(script);
+                };
+
+// https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+                var getUrlSearchParameter = function (name, url = window.location.href) {
+                    name = name.replace(/[\[\]]/g, '\\$&');
+                    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                            results = regex.exec(url);
+                    if (!results)
+                        return null;
+                    if (!results[2])
+                        return '';
+                    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+                };
+
+                var trackerMode = function (mode) {
+                    var value = getUrlSearchParameter('mode');
+                    return (new RegExp('(^|,)' + mode + '(,|$)', 'i')).test(value || '');
+                };
+
+//            if (trackerMode('debug'))
+                appendBodyScript("./src/tracker.js", "module");
+//            else
+//                appendBodyScript("./tracker.js");
+                if (trackerMode('demo'))
+                    appendBodyScript('./demo.js');
+            }
+        </script>
+    </body>
+</html>

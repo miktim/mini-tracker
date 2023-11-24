@@ -1,0 +1,86 @@
+# LiteRadar Leaflet mini tracker, MIT (c) 2019-2023 miktim@mail.ru
+
+Designed to visualize tracked objects or your own location. Interaction with
+the tracker is carried out by exchanging messages in JSON format via webview,
+websocket or JavaScript API.
+
+Run demo (the wonderful ideal world): 
+  https://miktim.github.io/mini-tracker-03/tracker?mode=demo&track=15:30
+
+Track your own location:
+  https://miktim.github.io/mini-tracker-03/tracker?mode=watch&watch=3
+
+URL search parameters (optional):
+  mode  (mode=nowatch)
+    debug   - debug source;
+    watch   - watch own location;
+    nowatch - disable watching own location;
+    demo    - run demo.
+
+  watch (watch=5)
+    watch = timeout for monitoring own location (seconds)
+
+  track (track=7:20:5000) minimizing track nodes
+    track = deviation(degrees):minDistance(meters):maxDistance(meters)
+
+  lang (browser defaults or lang=en_US)
+    Supported: en_US, ru_RU
+
+  websocket (websocket=undefined)
+    websocket = WebSocketURI
+    Note: WebSocket protocol depends on page protocol: http - ws,  https - wss.
+
+
+DRAFT VERSION!
+
+Java Script tracker API:
+    tracker.load(mapid, options); // init tracker
+    tracker.whenReady(handler); // wait for load tracker modules
+    tracker.SourceLocation({properties}); // returns a new source location object
+    tracker.Message(message); // returns a new message object
+    tracker.on(event, handler);
+
+Webview tracker API:
+    tracker.webview.toTracker(action);
+    tracker.webview.fromTracker(event);
+
+Actions (JSON):
+    { action: "source:update",
+      id: "<'transponder' unique id>",
+      name: "<'transponder' name>",
+      iconid: <0-4 : gray, blue, green, red, yellow>,
+      latitude: <degrees, WGS-84>,
+      longitude: <degrees, WGS-84>,
+      accuracy: <meters, radius!>,
+      speed: <meters per second>,
+      heading: <degrees>
+      timestamp: <milliseconds, EpochTimeStamp>,
+      timeout: <seconds, location 'lifetime'>
+    }
+
+    or
+
+    { action: "message:update",
+      message: "<user message>"
+    }
+
+Events (JSON):
+    { event: "source:update", 
+      id: "<host name>",
+      name: "<host name>",
+      iconid: <0-4>,
+      latitude: <latitude>,
+      longitude: <longitude>
+      accuracy: <accuracy>,
+      speed: undefined,
+      heading: undefined,
+      timestamp: <EpochTimeStamp>
+      timeout: <life time in seconds>
+    }
+
+    or
+
+    { event: "error:<error type>",
+      message: "<error message>",
+      code: <code number>
+    }
