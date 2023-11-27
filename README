@@ -1,16 +1,16 @@
 # LiteRadar Leaflet mini tracker, MIT (c) 2019-2023 miktim@mail.ru
 
-Designed to visualize tracked objects or your own location. Interaction with
-the tracker is carried out by exchanging messages in JSON format via webview,
-websocket or JavaScript API.
+DRAFT VERSION!
+
+Tracker is designed to visualize tracked objects or your own location. Interaction with the tracker is carried out by exchanging messages in JSON format via WebView, WebSocket or using the JavaScript API.
 
 Run demo (the wonderful ideal world): 
   https://miktim.github.io/literadar-mini-tracker/tracker?mode=demo&track=15:30
 
 Track your own location:
-  https://miktim.github.io/literadar-mini-tracker/tracker?mode=watch&watch=3
+  https://miktim.github.io/literadar-mini-tracker/tracker?mode=watch&watch=5
 
-URL search parameters (optional):
+Tracker html URL query parameters (optional):
   mode  (mode=nowatch)
     debug   - debug source;
     watch   - watch own location;
@@ -20,7 +20,7 @@ URL search parameters (optional):
   watch (watch=5)
     watch = timeout for monitoring own location (seconds)
 
-  track (track=7:20:5000) minimizing track nodes
+  track (track=7:20:1000) minimizing track nodes
     track = deviation(degrees):minDistance(meters):maxDistance(meters)
 
   lang (browser defaults or lang=en_US)
@@ -30,57 +30,86 @@ URL search parameters (optional):
     websocket = WebSocketURI
     Note: WebSocket protocol depends on page protocol: http - ws,  https - wss.
 
+Tracker objects:
+  SourceLocation object:
+    Properties:
+      {  id: <String>,     // required, 'transponder' unique id
+         name: <String>,   // optional, 'transponder' name
+         iconid: <Number>, // optional, (0 : 4) gray, blue, green, red, yellow
+         latitude: <Number>,  // required, latitude WGS-84 (-90 : 90)
+         longitude: <Number>, // required, longitude WGS-84 (-180 : 180)
+         accuracy: <Number>,  // required, meters (radius!)
+         speed: <Number>,   // optional, meters per second
+         heading: <Number>, // optional, degrees (0 : 360)
+         timestamp: <Number>, // required, EpochTimeStamp in milliseconds,
+         timeout: <Number>    // optional, location 'lifetime' in SECONDS
+      }
+    Methods:
+      <LatLng> getLatLng() // get Leaflet-style location 
+      <Position> getPosition() // get Yandex.Maps-style location
+      setLatLng(<LatLng>) // set Leaflet-style location 
+      setPosition(<Position>) // set Yandex.Maps-style location
+      update() // action update
 
-DRAFT VERSION!
+Leaflet-style location <LatLng> is an object {lat: latitude, lng: longitude}.
+Yandex.Maps-style location <Position> is an array [latitude, longitude]
+ 
+  Message object:
+    Properties:
+      {
+         message: <String> // required, user message
+      }
+    Methods:
+      update(); // show message on the tracker map
+
+  Action:
+      {
+         action: <String>, //
+         actionObj: <TrackerObject>
+      }
+
+  Actions <String>:
+    source:update
+    message:update
+
+  Event:
+      {
+         event: <String>, //
+         eventObj: <TrackerObject>
+      }
+  
+  Events:
+    error:<error type> ???
+
+  Error object:
+    Properties:
+       {  
+          message: <String>,
+          code: <Number>,
+          errObj: <TrackerObject>
+       }
 
 Java Script tracker API:
     tracker.load(mapid, options); // init tracker
     tracker.whenReady(handler); // wait for load tracker modules
+    tracker.getMap(); // returns Leaflet map object
     tracker.SourceLocation({properties}); // returns a new source location object
-    tracker.Message(message); // returns a new message object
+    tracker.Message(message <String>); // returns a new message object
     tracker.on(event, handler);
 
-Webview tracker API:
-    tracker.webview.toTracker(action);
-    tracker.webview.fromTracker(event);
+    Modules:
+      tracker.geoUtil // Geodetical functions
+        Functions:
+          <Number> distance(loc1<Location>, loc2<Location>);
+          <Number> heading(fromLoc<Location>, toLoc<Location>);
+          <Number> bearing((fromLoc<Location>, toLoc<Location>);
+          <Location> radialPoint(loc<Location>,heading<number>, distance<Number>);
+<Location> is <LatLng> or <Position>
 
-Actions (JSON):
-    { action: "source:update",
-      id: "<'transponder' unique id>",
-      name: "<'transponder' name>",
-      iconid: <0-4 : gray, blue, green, red, yellow>,
-      latitude: <degrees, WGS-84>,
-      longitude: <degrees, WGS-84>,
-      accuracy: <meters, radius!>,
-      speed: <meters per second>,
-      heading: <degrees>
-      timestamp: <milliseconds, EpochTimeStamp>,
-      timeout: <seconds, location 'lifetime'>
-    }
+Webview tracker entries:
+    tracker.webview.toTracker(<Action>);
+    tracker.webview.fromTracker(<Event>);
 
-    or
+Exchange via WebSocket is similar. 
 
-    { action: "message:update",
-      message: "<user message>"
-    }
-
-Events (JSON):
-    { event: "source:update", 
-      id: "<host name>",
-      name: "<host name>",
-      iconid: <0-4>,
-      latitude: <latitude>,
-      longitude: <longitude>
-      accuracy: <accuracy>,
-      speed: undefined,
-      heading: undefined,
-      timestamp: <EpochTimeStamp>
-      timeout: <life time in seconds>
-    }
-
-    or
-
-    { event: "error:<error type>",
-      message: "<error message>",
-      code: <code number>
-    }
+The tracker broadcasts location events in the watch mode.
