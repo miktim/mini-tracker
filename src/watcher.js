@@ -64,10 +64,10 @@ var renewLastSource = (function() {
 }).bind(geolocationWatcher);
 
 var onLocationFound = (function (l) {
-    var src = update(new Source(), l.coords);
-    src.timestamp = l.timestamp;
-    if (this.lastSource.accuracy > src.accuracy)
-        this.lastSource = src;
+    if (this.lastSource.accuracy > l.coords.accuracy) {
+        update(this.lastSource, l.coords);
+        this.lastSource.timestamp = l.timestamp;
+    }
 }).bind(geolocationWatcher);
 
 var onLocationError = (function (e) {
