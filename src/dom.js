@@ -138,8 +138,9 @@ export var objectList = {
                     .innerHTML = src.longitude.toFixed(6);
             createDOMElement('td', 'tracker-cell-number', row)
                     .innerHTML = src.accuracy.toFixed(1);
+            let heading = src.heading === null ? '-' : src.heading.toFixed(1);
             createDOMElement('td', 'tracker-cell-number', row)
-                    .innerHTML = src.heading.toFixed(1);
+                    .innerHTML = heading;
             createDOMElement('td', 'tracker-cell-number', row)
                     .innerHTML = (src.speed * 3.6).toFixed(0); // km/h
             createDOMElement('td', 'tracker-cell', row)
