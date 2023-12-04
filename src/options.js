@@ -11,7 +11,7 @@ export var options = {
     track: {
         deviation: 7, // degrees
         minDistance: 20, // meters min track segment length
-        maxDistance: 10000 // meters
+        maxDistance: 1000 // meters
     },
     outdatingDelay: 5, // seconds
     map: {

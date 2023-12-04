@@ -3,7 +3,7 @@
  */
 
 import {map, loadMap} from './map.js';
-import {geolocationWatcher} from './map.watcher.js';
+import {geolocationWatcher} from './watcher.js';
 import {options} from './options.js';
 import {objectsWatcher} from './objects.js';
 import {webSocket} from './websocket.js';

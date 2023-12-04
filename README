@@ -31,6 +31,7 @@ Tracker html URL query parameters (optional):
     Note: WebSocket protocol depends on page protocol: http - ws,  https - wss.
 
 Tracker objects:
+
   SourceLocation object:
     Properties:
       {  id: <String>,     // required, 'transponder' unique id
@@ -49,15 +50,14 @@ Tracker objects:
       <Position> getPosition() // get Yandex.Maps-style location
       setLatLng(<LatLng>) // set Leaflet-style location 
       setPosition(<Position>) // set Yandex.Maps-style location
-      update() // action update
+      update() // show location on the map
 
 Leaflet-style location <LatLng> is an object {lat: latitude, lng: longitude}.
 Yandex.Maps-style location <Position> is an array [latitude, longitude]
  
   Message object:
     Properties:
-      {
-         message: <String> // required, user message
+      {  message: <String> // required, user message
       }
     Methods:
       update(); // show message on the tracker map

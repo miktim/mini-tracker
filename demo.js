@@ -65,6 +65,7 @@ var demo = {
         }
     }
 };
+
 tracker.whenReady(function (e) {
     tracker.addEventListener('action',function(e) {
         console.log(e);

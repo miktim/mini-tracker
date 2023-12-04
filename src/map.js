@@ -80,7 +80,7 @@ var __map = {
     setCenterToLocation: function (timeout = options.watch) {
         logger.info(lang.msgLocWaiting, timeout);
 //        var zoom = this.getZoom();
-        this.locate({setView: true, watch: false, timeout: timeout * 1000}) // milliseconds
+        this.locate({setView: true, timeout: timeout * 1000}) // milliseconds
                 .on('locationfound', function (e) {
                     logger.cancel();
                     this.setZoom(options.map.defaultZoom); // restore zoom

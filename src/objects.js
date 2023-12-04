@@ -24,8 +24,8 @@ export function TrackerError(message, code = 0, object) {
 TrackerError.prototype = new Error;  // ???
 
 export function Source(s) {
-    this.id = location.host; // string, unique 'transponder' id
-    this.name = location.host; // string, 'transponder' name
+    this.id = 'LiteRadar tracker'; // string, unique 'transponder' id
+    this.name = 'tracker'; // string, 'transponder' name
     this.iconid = 0; // 
     this.latitude = undefined; // degrees (-90 : 90), WGS-84
     this.longitude = undefined; // degrees (-180 : 180), WGS-84

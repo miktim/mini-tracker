@@ -9,7 +9,7 @@ import {webSocket} from './websocket.js';
 import {tracker} from './tracker.js';
 
 
-var actions = {
+export var actions = {
 //    connect: function (actionObj) {
 //      tracker.setOptions(actionObj.options);
 //    }, 
