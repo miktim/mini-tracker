@@ -13,10 +13,11 @@ import {exchanger} from './exchanger.js';
 export var geolocationWatcher = {
     watchId : null,
     interval : null,
-    lastSource : new Source({accuracy: 100000}),
-    locations : [],
+    timeout: 0,
+    lastSource : null,
 
     start(timeout = options.watch, highAccuracy = true) {
+        this.timeout = timeout;
         if (!('geolocation' in navigator)) {
             logger.error({
                 type: 'locationerror',
@@ -27,6 +28,7 @@ export var geolocationWatcher = {
         }
         if (this.watchId)
             this.stop();
+        renewLastSource();
         this.watchId = navigator.geolocation.watchPosition(
                 onLocationFound,
                 onLocationError,
@@ -37,8 +39,10 @@ export var geolocationWatcher = {
                 }
         );
         this.interval = setInterval(function (self) {
-            if(self.lastSource.latitude)
+            if(self.lastSource.latitude) {
                 self.lastSource.update();
+                renewLastSource();
+            }
         }, timeout * 1000, this);
 
     },
@@ -51,6 +55,13 @@ export var geolocationWatcher = {
         }
     }
 };
+
+var renewLastSource = (function() {
+     this.lastSource = new Source({
+         accuracy: 100000, 
+         iconId: 4,
+         timeout: this.timeout});
+}).bind(geolocationWatcher);
 
 var onLocationFound = (function (l) {
     var src = update(new Source(), l.coords);
