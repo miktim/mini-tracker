@@ -59,7 +59,7 @@ export var geolocationWatcher = {
 var renewLastSource = (function() {
      this.lastSource = new Source({
          accuracy: 100000, 
-         iconId: 4,
+         iconid: 4,
          timeout: this.timeout});
 }).bind(geolocationWatcher);
 

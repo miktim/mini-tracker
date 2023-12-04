@@ -148,6 +148,7 @@ export var objectList = {
                     .innerHTML = src.id;
         }
         scrollPane.pane.hidden = false;
+        scrollPane.pane.focus(); // remove keyboard
         logger.info(lang.msgTapToLocate);
     }
 };
