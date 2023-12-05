@@ -115,7 +115,6 @@ Yandex.Maps-style location <Position> is an array [latitude, longitude]
         Functions:
           <Number> distance(loc1<Location>, loc2<Location>);
           <Number> heading(fromLoc<Location>, toLoc<Location>);
-          <Number> bearing((fromLoc<Location>, toLoc<Location>);
           <Location> radialPoint(loc<Location>,heading<Number>, distance<Number>);
 <Location> is <LatLng> or <Position>
 

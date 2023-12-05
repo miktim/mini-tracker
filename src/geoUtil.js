@@ -36,7 +36,7 @@ export function distance(fromLoc, toLoc) {
 }
 // Returns heading in degrees between locations
 export function heading(fromLoc, toLoc) {
-    return 360 - bearing(fromLoc, toLoc);
+    return 360 - bearing(fromLoc, toLoc); // ???
 }
 
 // Returns bearing in degrees between locations
@@ -51,7 +51,7 @@ export function bearing(fromLoc, toLoc) {
     var tc1 = Math.atan2(Math.sin(lon1 - lon2) * Math.cos(lat2),
             Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2))
             % (2 * Math.PI);
-    return (toDegrees(tc1) + 360) % 360;
+    return (toDegrees(tc1) + 360) % 360; // ???
 }
 
 // Returns destination point given distance in meters and heading in degrees from start point

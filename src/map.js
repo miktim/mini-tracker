@@ -25,7 +25,7 @@ export function loadMap(mapid = "map") {
 
     map.locate({setView: true, timeout: 1500})
             .once('locationfound', function (e) {
-            tracker.dispatchEvent(new TrackerReadyEvent());
+                tracker.dispatchEvent(new TrackerReadyEvent());
                 map.setZoom(options.map.defaultZoom);
             })
             .once('locationerror', function (e) {

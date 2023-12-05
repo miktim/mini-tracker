@@ -4,11 +4,12 @@
  * See https://w3c.github.io/geolocation-api/#examples
  */
 import {options} from './options.js';
-import {map} from './map.js';
+//import {map} from './map.js';
 import {Source} from './objects.js';
 import {update, extend} from './util.js';
 import {logger} from './logger.js';
 import {exchanger} from './exchanger.js';
+import {lang} from './lang.js';
 
 export var geolocationWatcher = {
     watchId : null,
@@ -58,6 +59,7 @@ export var geolocationWatcher = {
 
 var renewLastSource = (function() {
      this.lastSource = new Source({
+         name: lang.ownName,
          accuracy: 100000, 
          iconid: 4,
          timeout: this.timeout});

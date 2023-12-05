@@ -43,6 +43,7 @@ frm.onclick = function () {
     logger.info(lang.msgWildcards, 5);
 };
 frm.onsubmit = function (e) {
+// https://stackoverflow.com/questions/4276754/is-it-possible-to-remove-the-focus-from-a-text-input-when-a-page-loads
     document.activeElement.blur(); // remove focus, close keyboard
     var objList = map.searchObjectsByName(e.target.searchCriteria.value);
     objectList.create(objList, lang.msgFound);
@@ -75,9 +76,55 @@ var createPaneHeader = function (paneObj, style = 'tracker-pane') {
         paneObj.pane.hidden = true;
     };
 };
-createPaneHeader(scrollPane);
 
+export var infoPane = {
+    pane: null,
+    paneTitle: null,
+    infoArea: null
+};
+createPaneHeader(infoPane); //,'tracker-info-pane');
+infoPane.infoArea = createDOMElement('div', 'tracker-pane', infoPane.pane);
+//infoPane.pane.style.zIndex = 900;
+
+infoPane.infoArea.onclick = function (e) {
+    var pane = infoPane.pane;
+    if (!pane.style.marginLeft) {
+        pane.style.marginLeft = '-100px';
+    } else {
+        pane.style.marginLeft = '';
+    }
+};
+
+
+export var trackInfo = {
+    create: function (info, title) {
+        infoPane.pane.hidden = true;
+        infoPane.paneTitle.innerHTML = title;
+        infoPane.infoArea.innerHTML = '';
+        infoPane.pane.hidden = false;
+        var clientRect = infoPane.infoArea.getBoundingClientRect();
+        var table = createDOMElement('table', 'tracker-table', infoPane.infoArea);
+        table.style.maxWidth = Math.max(200, clientRect.width) + 'px';
+        this.makeRow(table, lang.tblNodeInfo[0], info.index + 1);
+        this.makeRow(table, lang.tblNodeInfo[1], formatTime(info.totalTime));
+        this.makeRow(table, lang.tblNodeInfo[2], (info.path / 1000).toFixed(3));
+        this.makeRow(table, lang.tblNodeInfo[3], (info.speed * 3.6).toFixed(0));
+        this.makeRow(table, lang.tblNodeInfo[4], info.heading ? info.heading.toFixed(1) : '-');
+        this.makeRow(table, lang.tblNodeInfo[5], info.course ? info.course.toFixed(1) : '-');
+
+        infoPane.pane.hidden = false;
+    },
+    makeRow: function (table, name, value) {
+        var row = createDOMElement('tr', 'tracker-row', table), cell;
+        createDOMElement('td', 'tracker-cell', row).innerHTML = name;
+        createDOMElement('td', 'tracker-cell-wide', row).innerHTML = value;
+    }
+};
+
+
+createPaneHeader(scrollPane);
 scrollPane.scrollArea = createDOMElement('div', 'tracker-scroll', scrollPane.pane);
+//scrollPane.pane.style.zIndex = 1100;
 
 var setScrollPaneSize = function () {
     var newHeight = ((window.innerHeight || document.documentElement.clientHeight) - 145) + 'px';
@@ -154,38 +201,6 @@ export var objectList = {
     }
 };
 
-export var infoPane = {
-    pane: null,
-    paneTitle: null,
-    infoArea: null
-};
-createPaneHeader(infoPane); //,'tracker-info-pane');
-infoPane.infoArea = createDOMElement('div', 'tracker-pane', infoPane.pane);
-
-export var trackInfo = {
-    create: function (info, title) {
-        infoPane.pane.hidden = true;
-        infoPane.paneTitle.innerHTML = title;
-        infoPane.infoArea.innerHTML = '';
-        infoPane.pane.hidden = false;
-        var clientRect = infoPane.infoArea.getBoundingClientRect();
-        var table = createDOMElement('table', 'tracker-table', infoPane.infoArea);
-        table.style.maxWidth = Math.max(200, clientRect.width) + 'px';
-        this.makeRow(table, lang.tblNodeInfo[0], info.index + 1);
-        this.makeRow(table, lang.tblNodeInfo[1], formatTime(info.totalTime));
-        this.makeRow(table, lang.tblNodeInfo[2], (info.path / 1000).toFixed(3));
-        this.makeRow(table, lang.tblNodeInfo[3], (info.speed * 3.6).toFixed(0));
-        this.makeRow(table, lang.tblNodeInfo[4], info.heading ? info.heading.toFixed(1) : '-');
-        this.makeRow(table, lang.tblNodeInfo[5], info.course ? info.course.toFixed(1) : '-');
-
-        infoPane.pane.hidden = false;
-    },
-    makeRow: function (table, name, value) {
-        var row = createDOMElement('tr', 'tracker-row', table), cell;
-        createDOMElement('td', 'tracker-cell', row).innerHTML = name;
-        createDOMElement('td', 'tracker-cell-wide', row).innerHTML = value;
-    }
-};
 export var loggerInfo = {
     pane: createDOMElement('div', 'tracker-console')
 };

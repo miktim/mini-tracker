@@ -7,6 +7,7 @@ import {update} from './util.js';
 // TODO trackererror[]
 export var lang = {
     lang: 'en-US',
+    ownName: "It's me",
     msgLocWaiting: 'Waiting for a location...',
     locationerror: [
         'Geolocation error: no such service',
@@ -38,3 +39,8 @@ export var lang = {
 };
 // TODO lang ru-RU
 var langs = [];
+langs['ru'] = {
+    lang: 'ru-RU',
+    ownName: 'Это я',
+    msgLocWaiting: 'Ожидаю координаты...'
+};
