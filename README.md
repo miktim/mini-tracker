@@ -93,7 +93,7 @@ Request to show an object with a green icon on the map:
   "latitude":51.47838445332488,
   "longitude":-0.0018107646286580348,
   "accuracy":14.6,
-  "speed":36730,
+  "speed":267,
   "heading":326,
   "timestamp":1711259479572,
   "timeout":3
@@ -159,13 +159,8 @@ Methods:
 | whenReady(handler) | | wait for load tracker modules |
 | getMap() | \<Leaflet Map> object | |
 | LocationSource({properties}) | \<LocationSource> | see above |
-| Message(\<String> message) | \<Message> | see above |
+| Message(\<String> message) | \<Message> | see above |  
 
-Tracker options:  
-
-| Option | Value | Description |
-|--------|---------|-------------|
-| mode | String |  |
 
 WebView entries:  
 | Method | Returns | Description |
@@ -201,8 +196,8 @@ Methods:
 
 | Event  | Description |
 |--------|-------------|
-| trackeraction | fired when tracker action requested |
-| trackererror | fired when error occures |  
+| trackeraction | an event triggered when an external action is approved|
+| trackererror | an event triggered when an error occurs in a JavaScript action |  
 
 #### 4.5 Module Tracker.util  
 
