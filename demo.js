@@ -14,7 +14,7 @@ var demo = {
             return;
         this.isRunning = true;
         for (var i = 1; i <= demos; i++) {
-            var d = tracker.SourceLocation();
+            var d = Tracker.SourceLocation();
             d.id = 'id Demo' + i;
             d.name = 'Demo' + i;
             d.timeout = timeout;
@@ -27,7 +27,7 @@ var demo = {
         this.interval = setInterval(function (self) {
             self.sendDemos();
         }, timeout * 1000, this); //!IE9
-        tracker.Message('Demo started').update();
+        Tracker.Message('Demo started').update();
     },
     stop: function () {
         if (this.interval) {
@@ -49,7 +49,7 @@ var demo = {
     moveRandom: function (d) {
         d.heading = (this.randInt(d.heading - 45, d.heading + 45) + 360) % 360;
         var dist = this.randDbl(10, 50); // distance in meters
-        d.setPosition(tracker.geoUtil.radialPoint(d.getPosition(), d.heading, dist));
+        d.setPosition(Tracker.geoUtil.radialPoint(d.getPosition(), d.heading, dist));
         d.speed = dist / ((Date.now() - d.timestamp) / 1000); //meters per second
         d.accuracy = this.randDbl(10, 50); // radius!
         d.timestamp = Date.now();
@@ -60,16 +60,16 @@ var demo = {
             try {
                 this.moveRandom(this.demos[i]).update();
             } catch (e) {
-                tracker.Message(e.message).update();
+                Tracker.Message(e.message).update();
             }
         }
     }
 };
 
-tracker.whenReady(function (e) {
-    tracker.addEventListener('action',function(e) {
-        console.log(e);
+Tracker.whenReady(function (e) {
+    Tracker.addEventListener('trackeraction',function(e) {
+        console.log(JSON.stringify(e));
     },{once:true});
-    demo.start(tracker.util.toPosition(tracker.getMap().getCenter()));
+    demo.start(Tracker.util.toPosition(Tracker.getMap().getCenter()));
     window.addEventListener('unload', demo.stop);
 });

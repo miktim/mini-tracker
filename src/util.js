@@ -51,12 +51,12 @@ export function createDOMElement(tagName, className, container) {
     }
     return el;
 }
-
+/*
 export function path(path) { // unused
     if (window.location.pathname.endsWith('/src/'))
         return '../' + path;
 }
-
+*/
 export function format(pattern, ...args) {
     for (var i = 0; i < args.length; i++) {
         pattern = pattern.replaceAll('\%' + (i + 1) + '\$', args[i].toString());

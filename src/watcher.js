@@ -8,7 +8,7 @@ import {options} from './options.js';
 import {Source} from './objects.js';
 import {update, extend} from './util.js';
 import {logger} from './logger.js';
-import {exchanger} from './exchanger.js';
+//import {exchanger} from './exchanger.js';
 import {lang} from './lang.js';
 
 export var geolocationWatcher = {
@@ -22,8 +22,8 @@ export var geolocationWatcher = {
         if (!('geolocation' in navigator)) {
             logger.error({
                 type: 'locationerror',
-                code: 0,
-                message: 'Geolocaton API not supported.'
+                code: 4,
+                message: lang.locationerror[4]
             });
             return;
         }
@@ -60,7 +60,7 @@ export var geolocationWatcher = {
 var renewLastSource = (function() {
      this.lastSource = new Source({
          name: lang.ownName,
-         accuracy: 100000, 
+         accuracy: 1000000, 
          iconid: 4,
          timeout: this.timeout});
 }).bind(geolocationWatcher);

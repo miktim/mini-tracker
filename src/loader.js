@@ -2,12 +2,12 @@
  * LiteRadar Leaflet tracker, MIT (c) 2023 miktim@mail.ru
  */
 
-import {map, loadMap} from './map.js';
 import {geolocationWatcher} from './watcher.js';
 import {options} from './options.js';
 import {objectsWatcher} from './objects.js';
 import {webSocket} from './websocket.js';
 import {getMobileOperatingSystem} from './util.js';
+import {map, loadMap} from './map.js';
 
 var activities = [];
 
@@ -25,7 +25,12 @@ export function loadTracker(mapid, opts = {}) {
     objectsWatcher.start();
 // see: https://github.com/richtr/NoSleep.js
     if (getMobileOperatingSystem())
-        noSleep.enable();
+// Enable wake lock.
+// (must be wrapped in a user input event handler e.g. a mouse or touch handler)
+        document.addEventListener('click', function enableNoSleep() {
+            document.removeEventListener('click', enableNoSleep, false);
+            noSleep.enable();
+        }, false);
 }
 
 function unloadTracker(e) {

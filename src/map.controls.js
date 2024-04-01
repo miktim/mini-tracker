@@ -43,6 +43,7 @@ var mapControls = [
     }))
 ];
 export function createControls(map) {
+    dom.createMainMenu();
     for (var i in mapControls) {
         mapControls[i].addTo(map);
     }

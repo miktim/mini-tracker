@@ -36,5 +36,5 @@ export var tracker = new Evented({
     webview: webview
 });
 
-window.tracker = tracker;
+window.Tracker = tracker;
 //}(window, document));

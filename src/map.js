@@ -5,7 +5,7 @@ import {logger} from "./logger.js";
 import {extend, toPosition} from './util.js';
 import {options} from './options.js';
 import {lang} from './lang.js';
-import {bearing} from './geoUtil.js';
+//import {bearing} from './geoUtil.js';
 import {MapSource, SourceListEntry, trackerObjects} from './objects.js';
 import {createControls} from './map.controls.js'
 import {Track} from './map.track.js';
@@ -23,7 +23,7 @@ export function loadMap(mapid = "map") {
     map = L.map(mapid, {center: [51.477928, -0.001545],
         zoom: options.map.defaultZoom, minZoom: options.map.minZoom, zoomControl: false});
 
-    map.locate({setView: true, timeout: 1500})
+    map.locate({setView: true, timeout: options.watch*1000, watch: false})
             .once('locationfound', function (e) {
                 tracker.dispatchEvent(new TrackerReadyEvent());
                 map.setZoom(options.map.defaultZoom);
@@ -66,12 +66,15 @@ String.prototype.replaceAll = function (f, r) {
 // https://stackoverflow.com/questions/3115150/how-to-escape-regular-expression-special-characters-using-javascript    
     return this.split(f).join(r);
 };
+
+MapSource.prototype.getSource = function() {
+  return this.marker.source;  
+};
 MapSource.prototype.outdated = function () {
-    var src = this.marker.source;
+    var src = this.getSource();
     if (src.timestamp + (src.timeout * 1000) < Date.now())
         this.marker.setOpacity(0.4);
 };
-
 MapSource.prototype.remove = function () {
 // this.marker, this.accuracyCircle remove from map.trackerObjectLayer
 };

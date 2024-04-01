@@ -2,7 +2,7 @@
  * LiteRadar tracker, MIT (c) 2019-2023 miktim@mail.ru 
  */
 import {options} from './options.js';
-import {onAction} from './exchanger.js';
+import {interfaces} from './exchanger.js';
 import {logger} from './logger.js';
 import {lang} from './lang.js';
 
@@ -18,7 +18,7 @@ export var webSocket = {
                 this.websocket = new WebSocket(wsurl);
                 this.websocket.onmessage = function (e) {
                     if (typeof e.data === 'string')
-                        onAction(e.data);
+                        interfaces.websocket.from(e.data);
                 };
                 this.websocket.onopen = function (e) {
                     logger.log(lang.msgWsOpen + e.target.url);

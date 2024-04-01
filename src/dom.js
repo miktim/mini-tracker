@@ -19,42 +19,47 @@ import {logger} from './logger.js';
 export var mainMenu = {
     pane: null
 };
-var menuItems = [
-    {img: './images/btn_locate.png', title: lang.actionSetCenter, onclick: function () {
-            map.setCenterToLocation();
-        }},
-    {img: './images/btn_bound.png', title: lang.actionShowAll, onclick: function () {
-            map.fitAllObjects();
-        }}
-];
-var pane = createDOMElement('div', 'tracker-button');
-for (var item of menuItems) {
-    var btn = createDOMElement('div', 'tracker-button', pane);
-    btn.addEventListener('click', item.onclick, false);
-    var img = createDOMElement('img', 'tracker-button', btn);
-    img.src = item.img;
-    img.title = item.title;
-}
-var frm = createDOMElement('form', 'tracker-search', pane);
-frm.style.display = '';
-frm.onclick = function () {
-    frm.searchCriteria.focus();
-    frm.searchCriteria.scrollIntoView();
-    logger.info(lang.msgWildcards, 5);
-};
-frm.onsubmit = function (e) {
+mainMenu.pane = createDOMElement('div', 'tracker-button');
+
+export var createMainMenu = function () {
+    var pane = mainMenu.pane;
+
+    var menuItems = [
+        {img: './images/btn_locate.png', title: lang.actionSetCenter, onclick: function () {
+                map.setCenterToLocation();
+            }},
+        {img: './images/btn_bound.png', title: lang.actionShowAll, onclick: function () {
+                map.fitAllObjects();
+            }}
+    ];
+    
+    for (var item of menuItems) {
+        var btn = createDOMElement('div', 'tracker-button', pane);
+        btn.addEventListener('click', item.onclick, false);
+        var img = createDOMElement('img', 'tracker-button', btn);
+        img.src = item.img;
+        img.title = item.title;
+    }
+    var frm = createDOMElement('form', 'tracker-search', pane);
+    frm.style.display = '';
+    frm.onclick = function () {
+        frm.searchCriteria.focus();
+        frm.searchCriteria.scrollIntoView();
+        logger.info(lang.msgWildcards, 5);
+    };
+    frm.onsubmit = function (e) {
 // https://stackoverflow.com/questions/4276754/is-it-possible-to-remove-the-focus-from-a-text-input-when-a-page-loads
-    document.activeElement.blur(); // remove focus, close keyboard
-    var objList = map.searchObjectsByName(e.target.searchCriteria.value);
-    objectList.create(objList, lang.msgFound);
-    return false;
+        document.activeElement.blur(); // remove focus, close keyboard
+        var objList = map.searchObjectsByName(e.target.searchCriteria.value);
+        objectList.create(objList, lang.msgFound);
+        return false;
+    };
+    var inp = createDOMElement('input', 'tracker-search', frm);
+    inp.type = 'text';
+    inp.name = 'searchCriteria';
+    inp.placeholder = lang.actionSearch;
+    inp.autocomplete = 'off';
 };
-var inp = createDOMElement('input', 'tracker-search', frm);
-inp.type = 'text';
-inp.name = 'searchCriteria';
-inp.placeholder = lang.actionSearch;
-inp.autocomplete = 'off';
-mainMenu.pane = pane;
 
 export var scrollPane = {
     pane: null,

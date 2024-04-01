@@ -3,9 +3,11 @@
  */
 import {map} from "./map.js";
 import {options} from './options.js';
-import {onAction, sendEvent} from './exchanger.js';
+import {lang} from './lang.js';
+import {interfaces} from './exchanger.js';
 import {merge, update, extend} from './util.js';
 import {tracker} from './tracker.js';
+import * as geoUtil from "./geoUtil.js";
 
 Number.prototype.between = function (min, max) {
     return this >= min && this <= max;
@@ -14,11 +16,10 @@ Number.prototype.between = function (min, max) {
 export var trackerObjects = [];
 
 // TODO events: update
-export function TrackerError(message, code = 0, object) {
-    this.message = message;
-    this.type = 'trackererror';
+export function TrackerError(code = 0, object) {
     this.code = code;
-    this.stack = (new Error()).stack;
+    this.message = lang.trackererror[code];
+    this.type = 'trackererror';
     this.trackerObj = object;
 }
 TrackerError.prototype = new Error;  // ???
@@ -52,14 +53,14 @@ export function Source(s) {
         return this;
     };
     this.update = function () { // TODO boolean options {broadcast, silent}
-        onAction(JSON.stringify(merge({action: 'source:update'}, this)));
-        sendEvent(JSON.stringify(merge({event: 'source:update'}, this)));
+        interfaces.javascript.from(merge({action: 'update:sourcelocation'}, this));
+//        sendEvent(JSON.stringify(merge({event: 'update:sourcelocation'}, this)));
         return this;
     };
     update(this, s);
 }
 
-export function Evented(extension={}) {
+export function Evented(extension = {}) {
     var evented = new EventTarget();
     evented.on = function (event, listener) {
         this.addEventListener(event, listener);
@@ -74,27 +75,35 @@ export function Evented(extension={}) {
 }
 
 export function checkSource(src) {
-    try {
-        if (!(src.id
-                && src.latitude.between(-90, 90)
-                && src.longitude.between(-180, 180)
-                && src.accuracy > 0
-                && src.timestamp <= Date.now())) {
-            throw new Error();
-        }
-// TODO check if heading, speed    
-        src.name = src.name || 'unknown';
-        src.timeout = src.timeout || options.watch;
-    } catch (e) {
-        throw new TrackerError('Illegal value or property missing', 1, src);
+    if (!(src.id
+            && src.latitude.between(-90, 90)
+            && src.longitude.between(-180, 180)
+            && src.accuracy > 0
+            && src.timestamp <= Date.now())) {
+        throw new TrackerError(3, src);
+    }
+    src.name = src.name || 'unknown';
+    src.timeout = src.timeout || options.outdatingDelay;
+    let prevSrc = trackerObjects[src.id]; // map depended
+    if (prevSrc) {
+        prevSrc = prevSrc.getSource();
+        if (src.timestamp <= prevSrc.timestamp)
+            throw new TrackerError(4, src); // outdated location
+// calc heading, speed 
+        let pos = [src.latitude, src.longitude];
+        let prevPos = [prevSrc.latitude, prevSrc.longitude];
+        src.heading = geoUtil.heading(prevPos, pos);
+        src.speed = geoUtil.distance(prevPos, pos) /
+               ((src.timestamp - prevSrc.timestamp) / 1000);
     }
 }
 
 export function Message(m) {
     this.message = m;
     this.update = function () {
-        onAction(JSON.stringify(merge({action: 'message:update'}, this)));
-        sendEvent(JSON.stringify(merge({event: 'message:update'}, this))); //???
+        interfaces.javascript.from(merge({action: 'update:message'}, this));
+//        sendEvent(JSON.stringify(merge({event: 'update:message'}, this))); //???
+    return this;
     };
 }
 
