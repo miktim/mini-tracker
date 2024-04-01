@@ -25,11 +25,11 @@ The tracker is designed to visualize tracked objects or your own location. Inter
     
 #### 1.2 tracker.html examples
 Run demo (the wonderful ideal world): 
-  https://miktim.github.io/literadar-mini-tracker/tracker?mode=demo&track=15:30
+  https://miktim.github.io/mini-tracker/tracker?mode=demo&track=15:30
   
 
 Track your own location:
-  https://miktim.github.io/literadar-mini-tracker/tracker?mode=watch&watch=3  
+  https://miktim.github.io/mini-tracker/tracker?mode=watch&watch=3  
   
   ### 2 Mini tracker user interface
   #### 2.1 Objects and controls
