@@ -1,4 +1,4 @@
-## LiteRadar Leaflet mini tracker, MIT (c) 2019-2024 @miktim
+## Leaflet GNSS mini tracker, MIT (c) 2019-2024 @miktim
 
 The tracker is designed to visualize tracked objects or your own location. Interaction with the tracker is carried out through the user interface or by exchanging messages in JSON format via WebView, WebSocket or using the JavaScript API.  
 
@@ -29,7 +29,7 @@ Run demo (the wonderful ideal world):
   
 
 Track your own location:
-  https://miktim.github.io/mini-tracker/tracker?mode=watch&watch=3  
+  https://miktim.github.io/mini-tracker/tracker?mode=watch&watch=5  
   
   ### 2 Mini tracker user interface
   #### 2.1 Objects and controls
@@ -66,11 +66,13 @@ For WebView clients, the html page has two entry points:
 - Tracker.webview.toTracker(String actionJson);
 - Tracker.webview.fromTracker(String eventJson).  
 
+The tracker connects to the WebSocket URI using subprotocol tracker.miktim.org
+
 Tracker supports two actions:  
 - update location source to show object on the map;
 - update message to display message.  
 
-Possible responses are "ok" or "error".
+Possible response events are "ok" or "error".
 
 Example of a request to show a message on the tracker map in JSON format:  
 ```
@@ -93,8 +95,6 @@ Request to show an object with a green icon on the map:
   "latitude":51.47838445332488,
   "longitude":-0.0018107646286580348,
   "accuracy":14.6,
-  "speed":267,
-  "heading":326,
   "timestamp":1711259479572,
   "timeout":3
 }

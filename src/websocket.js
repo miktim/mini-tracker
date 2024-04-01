@@ -1,5 +1,5 @@
 /* 
- * LiteRadar tracker, MIT (c) 2019-2023 miktim@mail.ru 
+ * LiteRadar tracker, MIT (c) 2019-2024 miktim@mail.ru 
  */
 import {options} from './options.js';
 import {interfaces} from './exchanger.js';
@@ -7,7 +7,7 @@ import {logger} from './logger.js';
 import {lang} from './lang.js';
 
 export var webSocket = {
-
+    subprotocol: 'tracker.miktim.org',
     websocket: null,
     error: null,
     start(host = options.websocket) {
@@ -15,7 +15,7 @@ export var webSocket = {
             var wsurl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') +
                     host.replace('ws:', '').replace('wss:', '');
             try {
-                this.websocket = new WebSocket(wsurl);
+                this.websocket = new WebSocket(wsurl, subprotocol);
                 this.websocket.onmessage = function (e) {
                     if (typeof e.data === 'string')
                         interfaces.websocket.from(e.data);
@@ -35,7 +35,7 @@ export var webSocket = {
     },
     stop() {
         if (this.websocket) {
-            this.websocket.close();
+            this.websocket.close(1001, 'Going away');
         }
     }
 };

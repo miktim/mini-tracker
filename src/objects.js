@@ -25,14 +25,14 @@ export function TrackerError(code = 0, object) {
 TrackerError.prototype = new Error;  // ???
 
 export function Source(s) {
-    this.id = 'LiteRadar tracker'; // string, unique 'transponder' id
+    this.id = 'LiteRadar tracker'; // required, string, unique 'transponder' id
     this.name = 'tracker'; // string, 'transponder' name
     this.iconid = 0; // 
-    this.latitude = undefined; // degrees (-90 : 90), WGS-84
-    this.longitude = undefined; // degrees (-180 : 180), WGS-84
-    this.accuracy = undefined; // meters (0:..., radius)
-    this.speed = undefined; // meters per second (0:...) (GNSS)
-    this.heading = undefined; // degrees (0:360) counting clockwise from true North (GNSS)
+    this.latitude = undefined; // required, degrees (-90 : 90), WGS-84
+    this.longitude = undefined; // required, degrees (-180 : 180), WGS-84
+    this.accuracy = undefined; // required, meters (0:..., radius)
+    this.speed = 0; // meters per second (0:...) (GNSS)
+    this.heading = 0; // degrees (0:360) counting clockwise from true North (GNSS)
     this.timestamp = Date.now(); // acquired time in milliseconds (EpochTimeStamp)
     this.timeout = options.outdatingDelay; // seconds (0:...) location lifetime
 
