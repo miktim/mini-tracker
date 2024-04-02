@@ -1,6 +1,6 @@
 // https://flagman.top/about-business/php-i-t-p-uzelki/webpack
 const path = require("path"); //connecting the built-in path module Node.JS
-var webpack = require('webpack');
+//var webpack = require('webpack');
  
 module.exports = {
   entry: "../src/tracker.js", 

@@ -25,7 +25,7 @@ The tracker is designed to visualize tracked objects or your own location. Inter
     
 #### 1.2 tracker.html examples
 Run demo (the wonderful ideal world): 
-  https://miktim.github.io/mini-tracker/tracker?mode=demo&track=15:30
+  https://miktim.github.io/mini-tracker/?mode=demo&track=15:30
   
 
 Track your own location:

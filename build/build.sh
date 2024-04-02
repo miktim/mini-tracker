@@ -1,4 +1,4 @@
 #!/bin/bash
 
-# Build ../tracker.min.js
+# Build ../tracker.js
 webpack

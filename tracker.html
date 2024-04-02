@@ -45,12 +45,13 @@
                     return (new RegExp('(^|,)' + mode + '(,|$)', 'i')).test(value || '');
                 };
 
-//            if (trackerMode('debug'))
+            if (trackerMode('debug'))
                 appendBodyScript("./src/tracker.js", "module");
-//            else
-//                appendBodyScript("./tracker.js");
-                if (trackerMode('demo'))
-                    appendBodyScript('./demo.js');
+            else
+                appendBodyScript("./tracker.js");
+
+            if (trackerMode('demo'))
+                appendBodyScript('./demo.js');
             }
         </script>
     </body>
