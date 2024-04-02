@@ -8,6 +8,7 @@ var demo = {
     demos: [],
 // timeout in seconds!
     start: function (position = [51.505, - 0.09], timeout, demos) { //
+        Tracker.SourceLocation().update(); // test trackererror event
         timeout = timeout || 3;
         demos = demos || 30;
         if (this.isRunning === true)
@@ -68,8 +69,11 @@ var demo = {
 
 Tracker.whenReady(function (e) {
     Tracker.addEventListener('trackeraction',function(e) {
-        console.log(JSON.stringify(e));
+        console.log(e);
     },{once:true});
+    Tracker.addEventListener('trackererror', function(e) {
+       console.log(e); 
+    });
     demo.start(Tracker.util.toPosition(Tracker.getMap().getCenter()));
     window.addEventListener('unload', demo.stop);
 });

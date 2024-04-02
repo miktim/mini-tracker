@@ -6,7 +6,7 @@ The tracker is designed to visualize tracked objects or your own location. Inter
 
 
 #### 1.1 Tracker html URL query parameters (optional):  
- - mode = nowatch (comma delimitesd modes):  
+ - mode = nowatch (comma delimited modes):  
     debug   - debug source;  
     watch   - watch own location;  
     nowatch - disable watching own location;  
@@ -62,7 +62,7 @@ The tracker communicates with the opposite side (let's call it the "client") via
 - client loads the tracker.html with requred parameters and establishes a connection;  
 - client sends a requests (Actions) in UTF-8 JSON format and receives a responses in UTF-8 JSON format (Events).  
 
-For WebView clients, the html page has two entry points:  
+For WebView clients, the tracker has two entry points:  
 - Tracker.webview.toTracker(String actionJson);
 - Tracker.webview.fromTracker(String eventJson).  
 
@@ -177,8 +177,8 @@ Methods:
 | update() | this | show object on the tracker map|
 | getLatLng() | \<LatLng> | get Leaflet-style  geographic point  |
 | getPosition() | \<Position> | get Yandex.Maps-style geographic point |
-| setLatLng(\<LatLng>) | | set Leaflet-style geographic point 
-| setPosition(\<Position>) | | set Yandex.Maps-style geographic point |
+| setLatLng(\<LatLng>) | this | set Leaflet-style geographic point 
+| setPosition(\<Position>) | this | set Yandex.Maps-style geographic point |
 
 Leaflet-style point \<LatLng> is an object {lat: latitude, lng: longitude}.
 Yandex.Maps-style point \<Position> is an array [latitude, longitude]
@@ -196,8 +196,8 @@ Methods:
 
 | Event  | Description |
 |--------|-------------|
-| trackeraction | an event triggered when an external action is approved|
-| trackererror | an event triggered when an error occurs in a JavaScript action |  
+| trackeraction | an event triggered when an WebView/WebSocket action is approved. The details are in actionObj property |
+| trackererror | an event triggered when an error occurs in a JavaScript action. The details are in the errorObj property.|  
 
 #### 4.5 Module Tracker.util  
 
@@ -205,10 +205,8 @@ Functions:
 
 | Function | Returns | Description |
 |--------|---------|-------------|
-| update(obj1 \<object>, obj2 \<object>)| obj1\<object> |  update obj1 from obj2ap |
-| extend(obj1 \<object>, obj2 \<object>) | obj1\<object> | extend obj1 from obj2|
-| merge(obj1 \<object>, obj2 \<object>) | obj1\<object> | update and extend obj1 from obj2|
-| createDOMElement(tagName\<String>, className\<String>, container\<DOMElement>) | \<DOMElement> |  |
+| getUrlSearchParameter(name \<String>)| String | returns URL query parameter value or null |
+| trackerMode(mode \<String>) | boolean | returns true if mode present |  
 
 #### 4.6 Module Tracker.geoUtil  
 

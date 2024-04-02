@@ -3,7 +3,7 @@
  */
 import {logger} from './logger.js';
 import {map} from './map.js';
-import {update} from './util.js';
+import {update, merge} from './util.js';
 import {Source, checkSource, TrackerError} from './objects.js';
 import {webSocket} from './websocket.js';
 import {tracker} from './tracker.js';
@@ -29,9 +29,9 @@ export var interfaces = {
         from: function (actionObj) {
             try {
                 actionObject(actionObj, "javascript");
-  tracker.dispatchEvent(new TrackerActionEvent(actionObj));
+//  tracker.dispatchEvent(new TrackerActionEvent(actionObj));
             } catch (e) {
-                tracker.dispatchEvent(new TrackerErrorEvent(actionObj)); // debug
+                tracker.dispatchEvent(new TrackerErrorEvent(e)); // debug
             }
         },
         to: function (eventObj) {
@@ -48,10 +48,11 @@ function actionJSON(actionJson, interfaceName) {
             actionObj = {action: "undefined"};
             throw new TrackerError(1, actionObj);
         }
-        var response = JSON.strngify({event: "ok:" + actionObj.action});
+        var response = JSON.stringify({event: "ok:" + actionObj.action});
         actionObject(actionObj, interfaceName);
         tracker.dispatchEvent(new TrackerActionEvent(actionObj));
     } catch (e) {
+        console.log(e);
         response = JSON.stringify(update(
                 {
                     event: "error:" +
@@ -79,7 +80,7 @@ function actionObject(actionObj, interfaceName) {
 
 var actions = {
     update: {
-        sourcelocation: function (actionObj) {
+        locationsource: function (actionObj) {
             checkSource(actionObj);
             map.onSourceUpdate(new Source(actionObj));
         },
@@ -95,13 +96,14 @@ var actions = {
 
 var TrackerActionEvent = function (actionObj) {
     let event = new Event('trackeraction');
-    event.trackerObj = actionObj;
+    event.actionObj = actionObj;
     return event;
 };
 
 function TrackerErrorEvent(e) {
     let event = new Event('trackererror');
-    return merge(event, e);
+    event.errorObj = e;
+    return event;
 }
 
 export var webview = {

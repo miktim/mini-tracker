@@ -21,8 +21,9 @@ export function TrackerError(code = 0, object) {
     this.message = lang.trackererror[code];
     this.type = 'trackererror';
     this.trackerObj = object;
+//    this.stack;
 }
-TrackerError.prototype = new Error;  // ???
+TrackerError.prototype = new Error();  // ???
 
 export function Source(s) {
     this.id = 'LiteRadar tracker'; // required, string, unique 'transponder' id
@@ -53,8 +54,7 @@ export function Source(s) {
         return this;
     };
     this.update = function () { // TODO boolean options {broadcast, silent}
-        interfaces.javascript.from(merge({action: 'update:sourcelocation'}, this));
-//        sendEvent(JSON.stringify(merge({event: 'update:sourcelocation'}, this)));
+        interfaces.javascript.from(merge({action: 'update:locationsource'}, this));
         return this;
     };
     update(this, s);
@@ -76,10 +76,10 @@ export function Evented(extension = {}) {
 
 export function checkSource(src) {
     if (!(src.id
-            && src.latitude.between(-90, 90)
-            && src.longitude.between(-180, 180)
-            && src.accuracy > 0
-            && src.timestamp <= Date.now())) {
+            && src.latitude && src.latitude.between(-90, 90)
+            && src.longitude && src.longitude.between(-180, 180)
+            && src.accuracy && src.accuracy > 0
+            && src.timestamp && Date.now() >= src.timestamp)) {
         throw new TrackerError(3, src);
     }
     src.name = src.name || 'unknown';
@@ -102,7 +102,6 @@ export function Message(m) {
     this.message = m;
     this.update = function () {
         interfaces.javascript.from(merge({action: 'update:message'}, this));
-//        sendEvent(JSON.stringify(merge({event: 'update:message'}, this))); //???
     return this;
     };
 }

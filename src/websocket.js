@@ -15,7 +15,7 @@ export var webSocket = {
             var wsurl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') +
                     host.replace('ws:', '').replace('wss:', '');
             try {
-                this.websocket = new WebSocket(wsurl, subprotocol);
+                this.websocket = new WebSocket(wsurl, this.subprotocol);
                 this.websocket.onmessage = function (e) {
                     if (typeof e.data === 'string')
                         interfaces.websocket.from(e.data);
