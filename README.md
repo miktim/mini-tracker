@@ -29,7 +29,7 @@ Run demo (the wonderful ideal world):
   
 
 Track your own location:
-  https://miktim.github.io/mini-tracker/tracker?mode=watch&watch=5  
+  https://miktim.github.io/mini-tracker/?mode=watch&watch=5  
   
   ### 2 Mini tracker user interface
   #### 2.1 Objects and controls
@@ -52,8 +52,8 @@ Tap the icon of the object to start tracking. Tap the icon again to stop it. Tap
 <img
   src="./markdown/track.png"
   alt="Track" height=400 width=240/>  
-Heading is the angle in degrees clockwise from true North from the previous to the current location.  
-Course is the angle in degrees clockwise from true North from the current to the next node.  
+Heading is the angle in degrees clockwise from true North to direction from the previous to the current location.  
+Course is the angle in degrees clockwise from true North to direction from the current to the next node.  
 Deviation is the angle between heading and course.  
   
 ### 3. Tracker WebView and WebSocket API  
@@ -156,17 +156,27 @@ Methods:
 | Method | Returns | Description |
 |--------|---------|-------------|
 | load(mapid) |  | load tracker given the DOM ID of a \<div> element |
-| whenReady(handler) | | wait for load tracker modules |
+| whenReady(listener) | | wait for load tracker modules |
 | getMap() | \<Leaflet Map> object | |
 | LocationSource({properties}) | \<LocationSource> | see above |
-| Message(\<String> message) | \<Message> | see above |  
+| Message(\<String> message) | \<Message> | see above |
+| on(events\<String>, listener) | this | register events listener |
+| once(events\<String>, listener)) | this | ... listener will only get fired once and then removed |
+| off(events\<String>) | this | remove listener |  
+
+Tracker Events  
+
+| Event  | Description |
+|--------|-------------|
+| trackeraction | an event triggered when an WebView/WebSocket action is approved. The details are in actionObj property |
+| trackererror | an event triggered when an error occurs in a JavaScript action. The details are in the errorObj property.|  
 
 
 WebView entries:  
 | Method | Returns | Description |
 |--------|---------|-------------|
 | webview.toTracker(\<String> actionJson) | | pass JSON representation of the Action object to Tracker |
-| webview.fromTracker(\<String> eventJson) | | pass JSON representation of the Event object from Tracker |
+| webview.fromTracker(\<String> eventJson) | | pass JSON representation of the Event object from Tracker |  
 
 #### 4.2 Tracker LocationSource object methods
 
@@ -192,14 +202,7 @@ Methods:
 |--------|---------|-------------|
 | update() | this | show message on the tracker map|  
 
-#### 4.4 Tracker Events  
-
-| Event  | Description |
-|--------|-------------|
-| trackeraction | an event triggered when an WebView/WebSocket action is approved. The details are in actionObj property |
-| trackererror | an event triggered when an error occurs in a JavaScript action. The details are in the errorObj property.|  
-
-#### 4.5 Module Tracker.util  
+#### 4.4 Module Tracker.util  
 
 Functions:
 
@@ -208,7 +211,7 @@ Functions:
 | getUrlSearchParameter(name \<String>)| String | returns URL query parameter value or null |
 | trackerMode(mode \<String>) | boolean | returns true if mode present |  
 
-#### 4.6 Module Tracker.geoUtil  
+#### 4.5 Module Tracker.geoUtil  
 
 Functions:
 
@@ -218,5 +221,5 @@ Functions:
 | heading(p1\<Point>, p2\<Point>) | Number | calculate angle in degrees clockwise from true North to direction from p1 to p2 |
 | radialPoint(p\<Point>,heading\<Number>, distance\<Number>) | \<Point>  | calculate geographic point from p with given heading and distance |
 
-\<Point> may be \<LatLng> or \<Position>. Returned value has same type.  
+\<Point> can be \<LatLng> or \<Position>. Returned value has same type.  
 

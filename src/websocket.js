@@ -42,12 +42,12 @@ export var webSocket = {
 
 var onClose = (function (e) {
     if (!this.error)
-        logger.log(lang.msgWsClosed + e.target.url);
+        logger.log(lang.msgWsClosed + e.target.url, 10); // TODO close code, reason
     this.websocket = null;
     this.error = null;
 }).bind(webSocket);
 
-var onError = (function (e) {
+var onError = (function (e) { // ???
     this.error = e;
     e.message = lang.errWebSocket + e.target.url;
     logger.error(e);

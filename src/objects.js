@@ -61,15 +61,18 @@ export function Source(s) {
 }
 
 export function Evented(extension = {}) {
-    var evented = new EventTarget();
+    var evented = new EventTarget(); 
     evented.on = function (event, listener) {
         this.addEventListener(event, listener);
+        return this;
     };
     evented.once = function (event, listener) {
         this.addEventListener(event, listener, {once: true});
+        return this;
     };
     evented.off = function (event, listener) {
         this.removeEventListener(event, listener);
+        return this;
     };
     return extend(evented, extension);
 }

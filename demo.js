@@ -34,6 +34,7 @@ var demo = {
         if (this.interval) {
             clearInterval(this.interval);
             this.isStarted = false;
+            Tracker.off('trackererror,trackeraction');
         }
     },
 // http://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
@@ -68,11 +69,10 @@ var demo = {
 };
 
 Tracker.whenReady(function (e) {
-    Tracker.addEventListener('trackeraction',function(e) {
+    Tracker.once('trackeraction', function (e) {
         console.log(e);
-    },{once:true});
-    Tracker.addEventListener('trackererror', function(e) {
-       console.log(e); 
+    }).on('trackererror', function (e) {
+        console.log(e);
     });
     demo.start(Tracker.util.toPosition(Tracker.getMap().getCenter()));
     window.addEventListener('unload', demo.stop);

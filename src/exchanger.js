@@ -52,15 +52,15 @@ function actionJSON(actionJson, interfaceName) {
         actionObject(actionObj, interfaceName);
         tracker.dispatchEvent(new TrackerActionEvent(actionObj));
     } catch (e) {
-        console.log(e);
-        response = JSON.stringify(update(
-                {
-                    event: "error:" +
-                            (actionObj.action ? actionObj.action : "undefined"),
-                    code: 5,
-                    message: "Internal error",
-                    type: "trackererror"
-                }, e));
+        if (e.type !== 'trackererror')
+            console.log(e); // unexpected internal erorr
+        response = JSON.stringify(update({
+            event: "error:" +
+                    (actionObj.action ? actionObj.action : "undefined"),
+            code: 5,
+            message: "Internal error",
+            type: "trackererror"
+        }, e));
     }
     interfaces[interfaceName].to(response);
 }
@@ -107,6 +107,6 @@ function TrackerErrorEvent(e) {
 }
 
 export var webview = {
-  toTracker: interfaces.webview.from,
-  fromTracker: interfaces.webview.to
+    toTracker: interfaces.webview.from,
+    fromTracker: interfaces.webview.to
 };

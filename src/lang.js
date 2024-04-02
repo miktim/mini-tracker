@@ -20,7 +20,8 @@ export var lang = {
         'JSON parse error',
         'Unknown action or action object',
         'Object property is missing or invalid',
-        'Outdated object'
+        'Outdated object',
+        'Internal error'
     ], //???
     msgWsOpen: 'WebSocket is open: ',
     msgWsClosed: 'WebSocket closed: ',
