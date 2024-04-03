@@ -68,12 +68,12 @@ var demo = {
     }
 };
 
-Tracker.once('trackerready',function (e) {
+Tracker.whenReady(function (e) {
     Tracker.once('trackeraction', function (e) {
         console.log(e);
     }).on('trackererror', function (e) {
         console.log(e);
     });
-    window.addEventListener('unload', demo.stop);
-    demo.start([e.readyObj.latitude, e.readyObj.longitude]);
+    window.addEventListener('beforeunload', demo.stop);
+    demo.start(e.readyObj.mapCenter);
 });

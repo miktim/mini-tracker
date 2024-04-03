@@ -24,6 +24,15 @@ export var tracker = new Evented({
     getMap: function () {
         return map;
     },
+    whenReady: function (listener) {
+        if ('trackerReady' in map) {
+            listener({readyObj: map.trackerReady});
+        } else {
+            this.once('trackerready', function (e) {
+                listener({readyObj: map.trackerReady});
+            });
+        }
+    },
     geoUtil: geoUtil,
     util: util,
     webview: webview

@@ -9,26 +9,21 @@ import {MapSource, SourceListEntry, trackerObjects} from './objects.js';
 import {createControls} from './map.controls.js'
 import {Track} from './map.track.js';
 import {tracker} from './tracker.js';
-import {interfaces} from './exchanger.js';
 
 export var map = {};
 
-var TrackerReadyEvent = function (options = {}) {
-    var event = new Event('trackerready');
-    return extend(event, options);
-};
-var fireReadyEvent = function (trueLoc) {
-    var readyObj = {
-        event: 'ready:minitracker',
-        version: tracker.version,
-        latitude: map.getCenter().lat,
-        longitude: map.getCenter().lng,
-        trueLocation: trueLoc
+function TrackerReadyEvent() {
+    return new Event('trackerready');
+}
+
+function fireTrackerReadyEvent() {
+    map.trackerReady = { 
+        event: 'ready:tracker:' + tracker.version,
+        mapCenter: toPosition(map.getCenter())
     };
-    tracker.dispatchEvent(new TrackerReadyEvent({readyObj: readyObj}));
-    interfaces.webview.to(JSON.stringify(readyObj));
-    interfaces.websocket.to(JSON.stringify(readyObj));
-};
+    tracker.dispatchEvent(new TrackerReadyEvent());
+}
+
 
 export function loadMap(mapid = "map") {
 // Prime Meridian (Greenwich)
@@ -41,17 +36,6 @@ export function loadMap(mapid = "map") {
 
 //    map.fitWorld({padding: [-100, -1000]});
 
-    map.locate({setView: true, zoom: options.map.defaultZoom, timeout: options.watch * 1000, watch: false})
-            .once('locationfound', function (e) {
-//                map.setZoom(options.map.defaultZoom);
-                map.once('moveend', function (e) {
-                    fireReadyEvent(true);
-                });
-            })
-            .once('locationerror', function (e) {
-                logger.error(e);
-                fireReadyEvent(false);
-            });
     document.getElementsByClassName('leaflet-control-attribution')[0].onclick =
             function (e) {
                 e.preventDefault();
@@ -72,6 +56,17 @@ export function loadMap(mapid = "map") {
     map.trackLayer = L.layerGroup().addTo(map); // track: polyline/accuracies
     map.tracking = new Track(map, map.trackLayer);
     createControls(map);
+
+    map.locate({setView: true, timeout: options.watch * 1000, watch: false})
+            .once('locationfound', function (e) {
+//                map.setZoom(options.map.defaultZoom);
+                fireTrackerReadyEvent();
+            })
+            .once('locationerror', function (e) {
+                logger.error(e);
+                fireTrackerReadyEvent();
+            });
+
     return map;
 }
 

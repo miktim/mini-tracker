@@ -17,7 +17,7 @@ export function loadTracker(mapid, opts = {}) {
     var noSleep = new NoSleep();
     noSleep.stop = noSleep.disable;
     activities = [objectsWatcher, geolocationWatcher, webSocket, noSleep];
-    window.addEventListener('unload', unloadTracker);
+    window.addEventListener('beforeunload', unloadTracker);
     if (options.checkMode('watch'))
         geolocationWatcher.start();
     if (options.websocket)
