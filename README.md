@@ -110,6 +110,16 @@ Example of Error Event response:
   "code": 3,
   "message": "Object property is missing or invalid",
   "type": "trackererror"
+}  
+```  
+When started, the tracker moves the map to the current location (if unaccesible it is the Prime Meridian Greenwich) and sends a Ready Event.  
+```
+{
+  "event":"ready:minitracker",
+  "version":"1.1.0",
+  "latitude":51.47838445,
+  "longitude":-0.0018107648,
+  "trueLocation":false
 }
 ```  
 
@@ -134,10 +144,9 @@ Properties:
 Properties:
 | Name | Type | Description |
 |-------------|------|------------|
-| message | String | required. Messages truncated to 64 chars. |
+| message | String | required. Messages truncated to 64 chars. |  
 
-
-#### 3.2 Tracker Event Error object  
+#### 3.3 Tracker Event Error object  
 
 | Name | Type | Description |
 |-------------|------|------------|
@@ -145,6 +154,15 @@ Properties:
 | message| String | Error message |
 | type   | String | Error type |
 
+
+#### 3.4 Tracker Event Ready object  
+
+| Name | Type | Description |
+|-------------|------|------------|
+| version   | String | Tracker version |
+| latitude | Number | latitude of map center |
+| longitude   | Number | longitude of map center |
+| trueLocation | boolean | is the location correct |  
 
 ### 4. Tracker JavaScript API  
 
@@ -156,7 +174,6 @@ Methods:
 | Method | Returns | Description |
 |--------|---------|-------------|
 | load(mapid) |  | load tracker given the DOM ID of a \<div> element |
-| whenReady(listener) | | wait for load tracker modules |
 | getMap() | \<Leaflet Map> object | |
 | LocationSource({properties}) | \<LocationSource> | see above |
 | Message(\<String> message) | \<Message> | see above |
@@ -168,6 +185,7 @@ Tracker Events
 
 | Event  | Description |
 |--------|-------------|
+| ready |  when tracker ready. The details are in readyObj property |
 | trackeraction | an event triggered when an WebView/WebSocket action is approved. The details are in actionObj property |
 | trackererror | an event triggered when an error occurs in a JavaScript action. The details are in the errorObj property.|  
 

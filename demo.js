@@ -68,12 +68,12 @@ var demo = {
     }
 };
 
-Tracker.whenReady(function (e) {
+Tracker.once('trackerready',function (e) {
     Tracker.once('trackeraction', function (e) {
         console.log(e);
     }).on('trackererror', function (e) {
         console.log(e);
     });
-    demo.start(Tracker.util.toPosition(Tracker.getMap().getCenter()));
     window.addEventListener('unload', demo.stop);
+    demo.start([e.readyObj.latitude, e.readyObj.longitude]);
 });

@@ -11,7 +11,7 @@ import * as util from './util.js';
 
 //(function (window, document) {
 export var tracker = new Evented({
-    version: '1.0.1',
+    version: '1.1.0',
     load: function (mapid = 'map', options = {}) {
         loadTracker(mapid, options);
     },
@@ -20,13 +20,6 @@ export var tracker = new Evented({
     },
     Message: function (msg) {
         return new Message(msg);
-    },
-    whenReady: function (handler) {
-        if('whenReady' in map) {
-            map.whenReady(handler,{map: map});
-        } else {
-            this.once('ready', handler);
-        }
     },
     getMap: function () {
         return map;

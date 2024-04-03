@@ -5,39 +5,53 @@ import {logger} from "./logger.js";
 import {extend, toPosition} from './util.js';
 import {options} from './options.js';
 import {lang} from './lang.js';
-//import {bearing} from './geoUtil.js';
 import {MapSource, SourceListEntry, trackerObjects} from './objects.js';
 import {createControls} from './map.controls.js'
 import {Track} from './map.track.js';
 import {tracker} from './tracker.js';
+import {interfaces} from './exchanger.js';
 
 export var map = {};
 
-var TrackerReadyEvent = function() {
-    var event = new Event('ready');
-    return extend(event, {map: map});
+var TrackerReadyEvent = function (options = {}) {
+    var event = new Event('trackerready');
+    return extend(event, options);
+};
+var fireReadyEvent = function (trueLoc) {
+    var readyObj = {
+        event: 'ready:minitracker',
+        version: tracker.version,
+        latitude: map.getCenter().lat,
+        longitude: map.getCenter().lng,
+        trueLocation: trueLoc
+    };
+    tracker.dispatchEvent(new TrackerReadyEvent({readyObj: readyObj}));
+    interfaces.webview.to(JSON.stringify(readyObj));
+    interfaces.websocket.to(JSON.stringify(readyObj));
 };
 
 export function loadMap(mapid = "map") {
 // Prime Meridian (Greenwich)
-    map = L.map(mapid, {center: [51.477928, -0.001545],
-        zoom: options.map.defaultZoom, minZoom: options.map.minZoom, zoomControl: false});
-
-    map.locate({setView: true, timeout: options.watch*1000, watch: false})
-            .once('locationfound', function (e) {
-                tracker.dispatchEvent(new TrackerReadyEvent());
-                map.setZoom(options.map.defaultZoom);
-            })
-            .once('locationerror', function (e) {
-                logger.error(e);
-                tracker.dispatchEvent(new TrackerReadyEvent());
-            });
-
-//    map.fitWorld({padding: [-100, -1000]});
-
+    var primeMeridian = [51.477928, -0.001545];
+    map = L.map(mapid, {center: primeMeridian, zoomControl: false,
+        zoom: options.map.defaultZoom, minZoom: options.map.minZoom});
     L.tileLayer(window.location.protocol + '//{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+
+//    map.fitWorld({padding: [-100, -1000]});
+
+    map.locate({setView: true, zoom: options.map.defaultZoom, timeout: options.watch * 1000, watch: false})
+            .once('locationfound', function (e) {
+//                map.setZoom(options.map.defaultZoom);
+                map.once('moveend', function (e) {
+                    fireReadyEvent(true);
+                });
+            })
+            .once('locationerror', function (e) {
+                logger.error(e);
+                fireReadyEvent(false);
+            });
     document.getElementsByClassName('leaflet-control-attribution')[0].onclick =
             function (e) {
                 e.preventDefault();
@@ -67,8 +81,8 @@ String.prototype.replaceAll = function (f, r) {
     return this.split(f).join(r);
 };
 
-MapSource.prototype.getSource = function() {
-  return this.marker.source;  
+MapSource.prototype.getSource = function () {
+    return this.marker.source;
 };
 MapSource.prototype.outdated = function () {
     var src = this.getSource();

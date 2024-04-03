@@ -52,7 +52,7 @@ function actionJSON(actionJson, interfaceName) {
         actionObject(actionObj, interfaceName);
         tracker.dispatchEvent(new TrackerActionEvent(actionObj));
     } catch (e) {
-        if (e.type !== 'trackererror')
+        if (!(e instanceof TrackerError))
             console.log(e); // unexpected internal erorr
         response = JSON.stringify(update({
             event: "error:" +
