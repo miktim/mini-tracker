@@ -1,25 +1,25 @@
-## Leaflet GNSS mini tracker, MIT (c) 2019-2024 @miktim
+## Leaflet based GNSS mini tracker, MIT (c) 2019-2024 @miktim
 
-The tracker is designed to visualize tracked objects or your own location. Interaction with the tracker is carried out through the user interface or by exchanging messages in JSON format via WebView, WebSocket or using the JavaScript API.  
+The tracker is designed for mobile browsers to visualize tracked objects or your own location. Interaction with the tracker is carried out through the user interface or by exchanging messages in JSON format via WebView, WebSocket or using the JavaScript API.  
 
 ### 1. tracker.html
 
 
 #### 1.1 Tracker html URL query parameters (optional):  
- - mode = nowatch (comma delimited modes):  
-    debug   - debug source;  
+ - mode = nowatch Comma delimited modes:  
+    debug   - debug JavaScript source;  
     watch   - watch own location;  
     nowatch - disable watching own location;  
     demo    - run demo.  
 
-  - watch = 5 Timeout for monitoring own location (seconds)
+  - watch = 5 Timeout for monitoring location (seconds)  
 
   - track = 7:20:1000 Minimizing track nodes:  
     deviation(degrees):minDistance(meters):maxDistance(meters)
 
   - lang = browser defaults or en_US Supported: en_US, ru_RU
 
-  - websocket = undefined WebSocketURI  
+  - websocket = undefined WebSocketURI:  
     Note: WebSocket protocol depends on the page protocol: http - ws,  https - wss.
     
     
@@ -40,19 +40,19 @@ Track your own location:
 
 The objects are represented by an icon and a circle with a radius equal to the accuracy of the coordinates. 
   
-Controls:
-- Search field. You can use wildcards in the file search style: ? - any single character, * - any characters. Swipe left-right and up-down through the search list. Tap the name to locate the object.
-- Show all objects button
-- Center map to your own location button  
+Controls at the top left:
+- field to search objects by name. You can use wildcards in the file search style: ? - any single character, * - any characters. Tap the name to locate the object.  
+- button to display all objects on the screen.  
+- button for centering the map according to your own location.  
 
 #### 2.2 Tracking  
 
-Tap the icon of the object to start tracking. Tap the icon again to stop it. Tap the track node info panel (its content may vary) to shift it to the left. Tap the node accuracy circle to show node info.  
+Tap the icon of the object to start tracking. Tap the icon again to stop it. Tap the track node info panel (contents may vary) to slide it to the left. Tap the node accuracy circle to show node info.  
 <br>
 <img
   src="./markdown/track.png"
   alt="Track" height=400 width=240/>  
-Heading is the angle in degrees clockwise from true North to direction from the previous to the current location.  
+Heading is the angle in degrees clockwise from true North to the direction from the previous location to the current one.  
 Course is the angle in degrees clockwise from true North to direction from the current to the next node.  
 Deviation is the angle between heading and course.  
   
@@ -66,7 +66,7 @@ For WebView clients, the tracker has two entry points:
 - Tracker.webview.toTracker(String actionJson);
 - Tracker.webview.fromTracker(String eventJson).  
 
-The tracker connects to the WebSocket URI using subprotocol tracker.miktim.org
+The tracker connects to the WebSocket URI using the "tracker.miktim.org" subprotocol.  
 
 Tracker supports two actions:  
 - update location source to show object on the map;
@@ -74,7 +74,7 @@ Tracker supports two actions:
 
 Possible response events are "ok" or "error".
 
-Example of a request to show a message on the tracker map in JSON format:  
+An example of a request to display a message on a tracker map in JSON format:  
 ```
 {
   "action": "update:message",
@@ -92,8 +92,7 @@ Request to show an object with a green icon on the map:
   "id":"id Demo1",
   "name":"Demo1",
   "iconid":2,
-  "latitude":51.47838445332488,
-  "longitude":-0.0018107646286580348,
+  "point":[51.47838445332488,-0.0018107646286580],
   "accuracy":14.6,
   "timestamp":1711259479572,
   "timeout":3
@@ -103,7 +102,7 @@ Response:
 ```
 { "event": "ok:update:locationsource" }
 ```
-Example of Error Event response:
+Example of Error event response:
 ```
 {
   "event": "error:update:locationsource",
@@ -112,14 +111,11 @@ Example of Error Event response:
   "type": "trackererror"
 }  
 ```  
-When started, the tracker moves the map to the current location (if unaccesible it is the Prime Meridian Greenwich) and sends a Ready Event.  
+When started, the tracker moves the map to the current location (if it is not available, it is the Greenwich Prime Meridian) and sends a Ready event with tracker version.  
 ```
 {
-  "event":"ready:minitracker",
-  "version":"1.1.0",
-  "latitude":51.47838445,
-  "longitude":-0.0018107648,
-  "trueLocation":false
+  "event":"ready:tracker:1.1.0",
+  "mapCenter":[51.47838445,0.0018107648]
 }
 ```  
 
@@ -130,14 +126,13 @@ Properties:
 |-------------|------|------------|
 | id | String | required, 'transponder' unique id |
 | name | String |required, 'transponder' name |
-| iconid | Number | optional, (0 : 4) gray, blue, green, red, yellow |
-| timeout | Number | optional, location 'lifetime' in SECONDS |
-| latitude | Number | required, latitude WGS-84 in degrees (-90 : 90)|
-|longitude | Number | required, longitude WGS-84 in degrees (-180 : 180)|
+| point | [ Number, Number ] | required, WGS-84 latitude and longitude in degrees [ (-90 : 90) , (-180 : 180) ]|
 | accuracy | Number | required, in meters (radius!) |
 | timestamp | Number | required, EpochTimeStamp in MILLISECONDS |
+| iconid | Number | optional, (0 : 4) gray, blue, green, red, yellow |
+| timeout | Number | optional, location 'lifetime' in SECONDS |
 | speed | Number | optional, meters per second |
-| heading | Number |optional, the angle in degrees clockwise from true North from the previous to the current location (0 : 360)|
+| heading | Number | optional, the angle in degrees clockwise from true North (0 : 360)|
 
 #### 3.2 Tracker Message object  
 
@@ -146,7 +141,7 @@ Properties:
 |-------------|------|------------|
 | message | String | required. Messages truncated to 64 chars. |  
 
-#### 3.3 Tracker Event Error object  
+#### 3.3 Tracker Error Event object  
 
 | Name | Type | Description |
 |-------------|------|------------|
@@ -155,14 +150,11 @@ Properties:
 | type   | String | Error type |
 
 
-#### 3.4 Tracker Event Ready object  
+#### 3.4 Tracker Ready Event object  
 
 | Name | Type | Description |
 |-------------|------|------------|
-| version   | String | Tracker version |
-| latitude | Number | latitude of map center |
-| longitude   | Number | longitude of map center |
-| trueLocation | boolean | is the location correct |  
+| mapCenter | [Number, Number] | latitude  and longitude of the map center |
 
 ### 4. Tracker JavaScript API  
 
@@ -173,19 +165,19 @@ Properties:
 Methods:
 | Method | Returns | Description |
 |--------|---------|-------------|
-| load(mapid) |  | load tracker given the DOM ID of a \<div> element |
-| getMap() | \<Leaflet Map> object | |
+| load(\<String> id) |  | load tracker given the DOM ID of a \<div> element |
+| whenReady(\<Function> fn) |  | wait for the tracker to load. Event contains readyObj |
+| getMap() | \<Leaflet Map> | |
 | LocationSource({properties}) | \<LocationSource> | see above |
 | Message(\<String> message) | \<Message> | see above |
-| on(events\<String>, listener) | this | register events listener |
-| once(events\<String>, listener)) | this | ... listener will only get fired once and then removed |
-| off(events\<String>) | this | remove listener |  
+| on(\<String> events, \<Function>fn) | this | register events listener |
+| once(\<String>events, \<Function> fn)) | this | ... listener will only get fired once and then removed |
+| off(\<String>events) | this | remove listener |  
 
 Tracker Events  
 
 | Event  | Description |
 |--------|-------------|
-| ready |  when tracker ready. The details are in readyObj property |
 | trackeraction | an event triggered when an WebView/WebSocket action is approved. The details are in actionObj property |
 | trackererror | an event triggered when an error occurs in a JavaScript action. The details are in the errorObj property.|  
 
@@ -205,8 +197,8 @@ Methods:
 | update() | this | show object on the tracker map|
 | getLatLng() | \<LatLng> | get Leaflet-style  geographic point  |
 | getPosition() | \<Position> | get Yandex.Maps-style geographic point |
-| setLatLng(\<LatLng>) | this | set Leaflet-style geographic point 
-| setPosition(\<Position>) | this | set Yandex.Maps-style geographic point |
+| setLatLng(\<LatLng> p) | this | set Leaflet-style geographic point 
+| setPosition(\<Position> p) | this | set Yandex.Maps-style geographic point |
 
 Leaflet-style point \<LatLng> is an object {lat: latitude, lng: longitude}.
 Yandex.Maps-style point \<Position> is an array [latitude, longitude]
@@ -226,8 +218,8 @@ Functions:
 
 | Function | Returns | Description |
 |--------|---------|-------------|
-| getUrlSearchParameter(name \<String>)| String | returns URL query parameter value or null |
-| trackerMode(mode \<String>) | boolean | returns true if mode present |  
+| getUrlSearchParameter(\<String> name)| String | returns URL query parameter value or null |
+| trackerMode(\<String>mode) | boolean | returns true if mode present |  
 
 #### 4.5 Module Tracker.geoUtil  
 
@@ -235,9 +227,9 @@ Functions:
 
 | Function | Returns | Description |
 |--------|---------|-------------|
-| distance(p1\<Point>, p2\<Point>) | Number| distance from p1 to p2 in meters |
-| heading(p1\<Point>, p2\<Point>) | Number | calculate angle in degrees clockwise from true North to direction from p1 to p2 |
-| radialPoint(p\<Point>,heading\<Number>, distance\<Number>) | \<Point>  | calculate geographic point from p with given heading and distance |
+| distance(\<Point>p1, \<Point>p2) | Number| distance from p1 to p2 in meters |
+| heading(\<Point>p1, \<Point>p2) | Number | calculate angle in degrees clockwise from true North to direction from p1 to p2 |
+| radialPoint(\<Point>p, \<Number>heading, \<Number>distance) | \<Point>  | calculate geographic point from p with given heading and distance |
 
 \<Point> can be \<LatLng> or \<Position>. Returned value has same type.  
 

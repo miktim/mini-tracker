@@ -28,9 +28,10 @@ TrackerError.prototype = new Error();  // ???
 export function Source(s) {
     this.id = 'LiteRadar tracker'; // required, string, unique 'transponder' id
     this.name = 'tracker'; // string, 'transponder' name
-    this.iconid = 0; // 
-    this.latitude = undefined; // required, degrees (-90 : 90), WGS-84
-    this.longitude = undefined; // required, degrees (-180 : 180), WGS-84
+    this.iconid = 0; //
+    this.point = [undefined,undefined]; 
+//    this.latitude = undefined; // required, degrees (-90 : 90), WGS-84
+//    this.longitude = undefined; // required, degrees (-180 : 180), WGS-84
     this.accuracy = undefined; // required, meters (0:..., radius)
     this.speed = 0; // meters per second (0:...) (GNSS)
     this.heading = 0; // degrees (0:360) counting clockwise from true North (GNSS)
@@ -38,19 +39,18 @@ export function Source(s) {
     this.timeout = options.outdatingDelay; // seconds (0:...) location lifetime
 
     this.getLatLng = function () {
-        return {lat: this.latitude, lng: this.longitude, alt: 0};
+        return {lat: this.point[0], lng: this.point[1]};
     };
     this.setLatLng = function (latlng) {
-        this.latitude = latlng.lat;
-        this.longitude = latlng.lng;
+        this.point[0] = latlng.lat;
+        this.point[1] = latlng.lng;
         return this;
     };
     this.getPosition = function () {
-        return [this.latitude, this.longitude, 0];
+        return this.point;
     };
     this.setPosition = function (position) {
-        this.latitude = position[0];
-        this.longitude = position[1];
+        this.point = position;
         return this;
     };
     this.update = function () { // TODO boolean options {broadcast, silent}
@@ -79,8 +79,8 @@ export function Evented(extension = {}) {
 
 export function checkSource(src) {
     if (!(src.id
-            && src.latitude && src.latitude.between(-90, 90)
-            && src.longitude && src.longitude.between(-180, 180)
+            && src.point[0] && src.point[0].between(-90, 90) // latitude
+            && src.point[1] && src.point[1].between(-180, 180) // longitude
             && src.accuracy && src.accuracy > 0
             && src.timestamp && Date.now() >= src.timestamp)) {
         throw new TrackerError(3, src);

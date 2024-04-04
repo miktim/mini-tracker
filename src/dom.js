@@ -186,9 +186,9 @@ export var objectList = {
 //                    createDOMElement('td', 'tracker-cell', row)).src = './images/btn_locate.png';
             createDOMElement('td', 'tracker-cell', row).innerHTML = src.name;
             createDOMElement('td', 'tracker-cell-number', row)
-                    .innerHTML = src.latitude.toFixed(6);
-            createDOMElement('td', 'tracker-cell-number', row)
-                    .innerHTML = src.longitude.toFixed(6);
+                    .innerHTML = src.point[0].toFixed(6); // latitude
+            createDOMElement('td', 'tracker-cell-number', row) //longitude
+                    .innerHTML = src.point[1].toFixed(6);
             createDOMElement('td', 'tracker-cell-number', row)
                     .innerHTML = src.accuracy.toFixed(1);
             let heading = src.heading === null ? '-' : src.heading.toFixed(1);
