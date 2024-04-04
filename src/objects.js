@@ -93,8 +93,8 @@ export function checkSource(src) {
         if (src.timestamp <= prevSrc.timestamp)
             throw new TrackerError(4, src); // outdated location
 // calc heading, speed 
-        let pos = [src.latitude, src.longitude];
-        let prevPos = [prevSrc.latitude, prevSrc.longitude];
+        let pos = src.point;
+        let prevPos = prevSrc.point;
         src.heading = geoUtil.heading(prevPos, pos);
         src.speed = geoUtil.distance(prevPos, pos) /
                ((src.timestamp - prevSrc.timestamp) / 1000);
@@ -119,7 +119,7 @@ export function SourceListEntry(src, tracked) {
     this.source = src;
     this.tracked = tracked;
 }
-
+// TODO remove after 5 outdates
 export var objectsWatcher = {
     interval: null,
 
