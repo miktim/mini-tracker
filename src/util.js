@@ -5,13 +5,13 @@
 export function toPosition(latLng) {
     if (Array.isArray(latLng))
         return latLng;
-    return [latLng.lat, latLng.lng, latLng.alt];
+    return [latLng.lat, latLng.lng];
 }
 
 export function toLatLng(position) {
     if ('lat' in position)
         return position;
-    return {lat: position[0], lng: position[1], alt: position[2]};
+    return {lat: position[0], lng: position[1]};
 }
 
 export function update(target, ...sources) {

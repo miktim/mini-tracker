@@ -9,6 +9,7 @@ import {MapSource, SourceListEntry, trackerObjects} from './objects.js';
 import {createControls} from './map.controls.js'
 import {Track} from './map.track.js';
 import {tracker} from './tracker.js';
+import {interfaces} from './exchanger.js';
 
 export var map = {};
 
@@ -21,6 +22,8 @@ function fireTrackerReadyEvent() {
         event: 'ready:tracker:' + tracker.version,
         mapCenter: toPosition(map.getCenter())
     };
+    interfaces.websocket.to(JSON.stringify(map.trackerReady));
+    interfaces.webview.to(JSON.stringify(map.trackerReady));
     tracker.dispatchEvent(new TrackerReadyEvent());
 }
 
