@@ -38,7 +38,7 @@ Track your own location:
   src="./markdown/search.png"
   alt="Search" height=400 width=240/>  
 
-The objects are represented by an icon and a circle with a radius equal to the accuracy of the coordinates. 
+The objects are represented by an icon and a circle with a radius equal to the accuracy of the coordinates. Objects with an expired timeout dim.
   
 Controls at the screen top right:
 - field to search objects by name. You can use wildcards in the file search style: ? - any single character, * - any characters. Tap the name to locate the object.  
@@ -166,20 +166,20 @@ Methods:
 | Method | Returns | Description |
 |--------|---------|-------------|
 | load(\<String> id) |  | load tracker given the DOM ID of a \<div> element |
-| whenReady(\<Function> fn) |  | wait for the tracker to load. Event contains readyObj |
+| whenReady(\<Function> fn) |  | wait for the tracker to load. Event contains readyObj property |
 | getMap() | \<Leaflet Map> | |
 | LocationSource({properties}) | \<LocationSource> | see above |
 | Message(\<String> message) | \<Message> | see above |
 | on(\<String> events, \<Function>fn) | this | register events listener |
-| once(\<String>events, \<Function> fn)) | this | ... listener will only get fired once and then removed |
-| off(\<String>events) | this | remove listener |  
+| once(\<String>events, \<Function> fn) | this | ... listener will only get fired once and then removed |
+| off(\<String>events, \<Function> fn) | this | remove listener |  
 
 Tracker Events  
 
 | Event  | Description |
 |--------|-------------|
-| trackeraction | an event triggered when an WebView/WebSocket action is approved. The details are in actionObj property |
-| trackererror | an event triggered when an error occurs in a JavaScript action. The details are in the errorObj property.|  
+| trackeraction | an event triggered when an WebView/WebSocket action is approved. The details are in the event actionObj property |
+| trackererror | an event triggered when an error occurs in a JavaScript action. The details are in the event errorObj property.|  
 
 
 WebView entries:  
@@ -219,7 +219,8 @@ Functions:
 | Function | Returns | Description |
 |--------|---------|-------------|
 | getUrlSearchParameter(\<String> name)| String | returns URL query parameter value or null |
-| trackerMode(\<String>mode) | boolean | returns true if mode present |  
+| trackerMode(\<String>mode) | boolean | returns true if mode present |
+| getMobileOperatingSystem() | String | returns mobile OS name (Android, iOS, Windows Phone) or null |  
 
 #### 4.5 Module Tracker.geoUtil  
 
