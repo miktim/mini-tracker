@@ -1,5 +1,5 @@
 /* 
- * LiteRadar Leaflet tracker, MIT (c) 2019-2022 miktim@mail.ru
+ * LiteRadar Leaflet tracker, MIT (c) 2019-2024 miktim@mail.ru
  * Geolocation watcher
  * See https://w3c.github.io/geolocation-api/#examples
  */
@@ -40,7 +40,7 @@ export var geolocationWatcher = {
                 }
         );
         this.interval = setInterval(function (self) {
-            if(self.lastSource.latitude) {
+            if(self.lastSource.accuracy) {
                 self.lastSource.update();
                 renewLastSource();
             }
@@ -60,15 +60,15 @@ export var geolocationWatcher = {
 var renewLastSource = (function() {
      this.lastSource = new Source({
          name: lang.ownName,
-         accuracy: 1000000, 
+//         accuracy: 1000000, 
          iconid: 4,
          timeout: this.timeout});
 }).bind(geolocationWatcher);
 
 var onLocationFound = (function (l) {
-    if (this.lastSource.accuracy > l.coords.accuracy) {
+    if (this.lastSource.accuracy > l.coords.accuracy || !this.lastSource.accuracy) {
         update(this.lastSource, l.coords);
-        this.lastsource.setPosition(
+        this.lastSource.setPosition(
                 [l.coords.latitude, l.coords.longitude]);
         this.lastSource.timestamp = l.timestamp;
     }

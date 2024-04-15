@@ -45,27 +45,52 @@ export function merge(target, ...sources) {
 
 export function createDOMElement(tagName, className, container) {
     var el = document.createElement(tagName);
-    el.className = className || '';
+    if (className)
+        el.className = className;
     if (container) {
         container.appendChild(el);
     }
     return el;
 }
-/*
-export function path(path) { // unused
-    if (window.location.pathname.endsWith('/src/'))
-        return '../' + path;
+
+function addDOMTableRow(rowData = [], rowClasses = [], tableEl, tag = 'td') {
+    var rowEl = createDOMElement('tr', 'tracker-table', tableEl);
+    for (var coli = 0; coli < rowData.length; coli++) {
+        var className = rowClasses[coli] ? rowClasses[coli] : 'tracker-table';
+        createDOMElement(tag, className, rowEl).innerHTML = rowData[coli];
+    }
 }
-*/
+
+export function TrackerDOMTable(tableInfo = {}) {
+    this.tableNode = createDOMElement('table', 'tracker-table');
+    this.tableInfo = tableInfo;
+    this.addRow = function (rowData, rowCls = this.tableInfo.rowClasses) {
+        addDOMTableRow(rowData, rowCls, this.tableNode, 'td');
+    };
+    this.addHeader = function (rowData, rowCls = this.tableInfo.headerClasses) {
+        addDOMTableRow(rowData, rowCls, this.tableNode, 'th');
+    };
+    if ('header' in tableInfo) {
+        this.addHeader(tableInfo.header);
+    }
+    if ('table' in tableInfo) {
+        for (var rowi = 0; rowi < tableInfo.table.length; rowi++) {
+            this.addRow(tableInfo.table[rowi]);
+        }
+    }
+}
+
 export function format(pattern, ...args) {
-    for (var i = 0; i < args.length; i++) {
+    for (var i = 0;
+    i < args.length; i++) {
         pattern = pattern.replaceAll('\%' + (i + 1) + '\$', args[i].toString());
     }
     return pattern;
 }
 
 export function formatTime(timeMillis) {
-    if(timeMillis < 1000) return '0:00:00';
+    if (timeMillis < 1000)
+        return '0:00:00';
     var timeSec = Math.floor(timeMillis / 1000);
     var sec = timeSec % 60;
     var min = Math.floor(timeSec / 60) % 60;

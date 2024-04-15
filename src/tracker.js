@@ -1,5 +1,5 @@
 /* 
- * LiteRadar tracker, MIT (c) 2023 miktim@mail.ru
+ * LiteRadar tracker, MIT (c) 2023-2024 miktim@mail.ru
  */
 
 import {loadTracker} from './loader.js';
@@ -11,7 +11,7 @@ import * as util from './util.js';
 
 //(function (window, document) {
 export var tracker = new Evented({
-    version: '1.1.1',
+    version: '1.2.1',
     load: function (mapid = 'map', options = {}) {
         loadTracker(mapid, options);
     },

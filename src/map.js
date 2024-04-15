@@ -24,9 +24,9 @@ function fireTrackerReadyEvent() {
     };
     interfaces.websocket.to(JSON.stringify(map.trackerReady));
     interfaces.webview.to(JSON.stringify(map.trackerReady));
+    logger.log(lang.msgReady);
     tracker.dispatchEvent(new TrackerReadyEvent());
 }
-
 
 export function loadMap(mapid = "map") {
 // Prime Meridian (Greenwich)
@@ -83,24 +83,26 @@ MapSource.prototype.getSource = function () {
     return this.marker.source;
 };
 MapSource.prototype.outdated = function () {
-    var src = this.getSource();
-    if (src.timestamp + (src.timeout * 1000) < Date.now())
+//    var src = this.getSource(); // TODO see objectsWatcher
+//    if (src.timestamp + (src.timeout * 1000) < Date.now())
         this.marker.setOpacity(0.4);
 };
 MapSource.prototype.remove = function () {
 // this.marker, this.accuracyCircle remove from map.trackerObjectLayer
+    this.marker.removeFrom(map.trackerObjectLayer);
+    this.accuracyCircle.removeFrom(map.trackerObjectLayer);
 };
 
 var __map = {
     setCenterToLocation: function (timeout = options.watch) {
         logger.info(lang.msgLocWaiting, timeout);
 //        var zoom = this.getZoom();
-        this.locate({setView: true, timeout: timeout * 1000}) // milliseconds
-                .on('locationfound', function (e) {
+        this.locate({setView: true, timeout: timeout * 1000, watch: false}) // milliseconds
+                .once('locationfound', function (e) {
                     logger.cancel();
                     this.setZoom(options.map.defaultZoom); // restore zoom
                 })
-                .on('locationerror', function (e) {
+                .once('locationerror', function (e) {
                     logger.error(e);
                 });
     },

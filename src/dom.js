@@ -1,7 +1,7 @@
 /* 
- * LiteRadar tracker, MIT (c) 2019-2023 miktim@mail.ru
+ * LiteRadar tracker, MIT (c) 2019-2024 miktim@mail.ru
  */
-import {createDOMElement, formatTime} from './util.js';
+import {createDOMElement, formatTime, TrackerDOMTable} from './util.js';
 import {lang} from './lang.js';
 import {map} from './map.js';
 import {logger} from './logger.js';
@@ -30,9 +30,13 @@ export var createMainMenu = function () {
             }},
         {img: './images/btn_bound.png', title: lang.actionShowAll, onclick: function () {
                 map.fitAllObjects();
+            }},
+        {img: './images/btn_history.png', title: lang.actionHistory, onclick: function () {
+                logger.showHistory();
             }}
+
     ];
-    
+
     for (var item of menuItems) {
         var btn = createDOMElement('div', 'tracker-button', pane);
         btn.addEventListener('click', item.onclick, false);
@@ -94,13 +98,13 @@ infoPane.infoArea = createDOMElement('div', 'tracker-pane', infoPane.pane);
 infoPane.infoArea.onclick = function (e) {
     var pane = infoPane.pane;
     if (!pane.style.marginLeft) {
-        pane.style.marginLeft = '-100px';
+        pane.style.marginLeft = '-130px';
     } else {
         pane.style.marginLeft = '';
     }
 };
 
-
+// TODO prompt to shift left
 export var trackInfo = {
     create: function (info, title) {
         infoPane.pane.hidden = true;
@@ -108,21 +112,16 @@ export var trackInfo = {
         infoPane.infoArea.innerHTML = '';
         infoPane.pane.hidden = false;
         var clientRect = infoPane.infoArea.getBoundingClientRect();
-        var table = createDOMElement('table', 'tracker-table', infoPane.infoArea);
-        table.style.maxWidth = Math.max(200, clientRect.width) + 'px';
-        this.makeRow(table, lang.tblNodeInfo[0], info.index + 1);
-        this.makeRow(table, lang.tblNodeInfo[1], formatTime(info.totalTime));
-        this.makeRow(table, lang.tblNodeInfo[2], (info.path / 1000).toFixed(3));
-        this.makeRow(table, lang.tblNodeInfo[3], (info.speed * 3.6).toFixed(0));
-        this.makeRow(table, lang.tblNodeInfo[4], info.heading ? info.heading.toFixed(1) : '-');
-        this.makeRow(table, lang.tblNodeInfo[5], info.course ? info.course.toFixed(1) : '-');
-
-        infoPane.pane.hidden = false;
-    },
-    makeRow: function (table, name, value) {
-        var row = createDOMElement('tr', 'tracker-row', table), cell;
-        createDOMElement('td', 'tracker-cell', row).innerHTML = name;
-        createDOMElement('td', 'tracker-cell-wide', row).innerHTML = value;
+        var table = new TrackerDOMTable({rowClasses:['','tracker-cell-wide']});
+        table.tableNode.style.maxWidth = Math.max(200, clientRect.width) + 'px';
+        table.addRow([lang.tblNodeInfo[0], info.index + 1]);
+        table.addRow([lang.tblNodeInfo[1], formatTime(info.totalTime)]);
+        table.addRow([lang.tblNodeInfo[2], (info.path / 1000).toFixed(3)]);
+        table.addRow([lang.tblNodeInfo[3], (info.speed * 3.6).toFixed(0)]);
+        table.addRow([lang.tblNodeInfo[4], info.heading ? info.heading.toFixed(1) : '-']);
+        table.addRow([lang.tblNodeInfo[5], info.course ? info.course.toFixed(1) : '-']);
+        infoPane.infoArea.appendChild(table.tableNode);
+//        infoPane.pane.hidden = false;
     }
 };
 
@@ -152,6 +151,7 @@ var onWindowSizeChange = function (handler) {
 };
 onWindowSizeChange(setScrollPaneSize);
 
+// TODO mark outdated
 export var objectList = {
     create: function (list, title) {
         scrollPane.pane.hidden = true;
@@ -162,51 +162,46 @@ export var objectList = {
         }
         scrollPane.paneTitle.innerHTML = title + listLength;
         scrollPane.scrollArea.innerHTML = '';
-        var table = createDOMElement('table', 'tracker-table', scrollPane.scrollArea);
-        table.onclick = function (e) {
+        var table = new TrackerDOMTable({header: lang.hdrSourceTable});
+        table.tableNode.onclick = function (e) {
             if (e.target.tagName.toLowerCase() === 'td') {
                 var objid = e.target.parentNode.lastChild.innerHTML;
                 map.locateObject(objid);
                 scrollPane.pane.hidden = true;
             }
         };
-        var hdr = createDOMElement('tr', '', table), cell;
-        for (var i in lang.hdrSourceTable) {
-            createDOMElement('th', 'tracker-cell', hdr)
-                    .innerHTML = lang.hdrSourceTable[i];
-        }
-
+        table.tableInfo.rowClasses = [
+            'tracker-cell-number',
+            '',
+            'tracker-cell-number',
+            'tracker-cell-number',
+            'tracker-cell-number',
+            'tracker-cell-number',
+            'tracker-cell-number',
+            '',
+            'tracker-invisible'
+        ];
         for (var i = 0; i < listLength; i++) {
             var obj = list[i];
             var src = obj.source;
-            var row = createDOMElement('tr', 'tracker-table', table);
-            createDOMElement('td', 'tracker-cell-number', row)
-                    .innerHTML = (obj.tracked ? '*' : '') + (i + 1);
-//            createDOMElement('img', 'tracker-table',
-//                    createDOMElement('td', 'tracker-cell', row)).src = './images/btn_locate.png';
-            createDOMElement('td', 'tracker-cell', row).innerHTML = src.name;
-            createDOMElement('td', 'tracker-cell-number', row)
-                    .innerHTML = src.point[0].toFixed(6); // latitude
-            createDOMElement('td', 'tracker-cell-number', row) //longitude
-                    .innerHTML = src.point[1].toFixed(6);
-            createDOMElement('td', 'tracker-cell-number', row)
-                    .innerHTML = src.accuracy.toFixed(1);
-            let heading = src.heading === null ? '-' : src.heading.toFixed(1);
-            createDOMElement('td', 'tracker-cell-number', row)
-                    .innerHTML = heading;
-            createDOMElement('td', 'tracker-cell-number', row)
-                    .innerHTML = (src.speed * 3.6).toFixed(0); // km/h
-            createDOMElement('td', 'tracker-cell', row)
-                    .innerHTML = (new Date(src.timestamp)).toLocaleString(); // TODO swap date/time
-            createDOMElement('td', 'tracker-invisible', row)
-                    .innerHTML = src.id;
+            table.addRow([
+                (obj.tracked ? '*' : '') + (i + 1),
+                src.name,
+                src.getPosition()[0].toFixed(7), // latitude
+                src.getPosition()[1].toFixed(7), // longitude
+                src.accuracy.toFixed(1),
+                src.heading ? src.heading.toFixed(1) : '-',
+                src.speed ? (src.speed * 3.6).toFixed(0) : '-', // km/h
+                (new Date(src.timestamp)).toLocaleString(), // TODO swap date/time
+                src.id]);
         }
+        scrollPane.scrollArea.appendChild(table.tableNode);
         scrollPane.pane.hidden = false;
         logger.info(lang.msgTapToLocate);
     }
 };
 
-export var loggerInfo = {
+export var loggerPane = {
     pane: createDOMElement('div', 'tracker-console')
 };
-loggerInfo.pane.hidden = true;
+loggerPane.pane.hidden = true;

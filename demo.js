@@ -1,5 +1,5 @@
 /* 
- * LiteRadar tracker demo, MIT (c) 2019-2023 miktim@mail.ru
+ * LiteRadar tracker demo, MIT (c) 2019-2024 miktim@mail.ru
  */
 
 var demo = {
@@ -22,11 +22,13 @@ var demo = {
             d.setPosition(position);
             d.heading = this.randInt(0, 360);
             d.iconid = 1; //
+            d.timestamp = Date.now();
             this.demos.push(this.moveRandom(d));
         }
-        this.sendDemos();
+        this.updateDemos();
+
         this.interval = setInterval(function (self) {
-            self.sendDemos();
+            self.updateDemos();
         }, timeout * 1000, this); //!IE9
         Tracker.Message('Demo started').update();
     },
@@ -57,7 +59,7 @@ var demo = {
         d.timestamp = Date.now();
         return d;
     },
-    sendDemos: function () {
+    updateDemos: function () {
         for (var i in this.demos) {
             try {
                 this.moveRandom(this.demos[i]).update();

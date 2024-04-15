@@ -25,7 +25,7 @@ table.tracker-table {
 tr.tracker-table, th.tracker-table {
     white-space: nowrap;
 }
-td.tracker-table, .tracker-cell, .tracker-cell-number, .tracker-cell-wide {
+td.tracker-table, th.tracker-table, .tracker-cell, .tracker-cell-number, .tracker-cell-wide {
     background-color: black;
     padding: 0px 5px;
     border: 1px solid white;

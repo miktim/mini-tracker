@@ -1,24 +1,28 @@
 /* 
- * LiteRadar tracker logger, MIT (c) 2019-2023 miktim@mail.ru
+ * LiteRadar tracker logger, MIT (c) 2019-2024 miktim@mail.ru
  */
-import {loggerInfo} from './dom.js';
+import {loggerPane, scrollPane} from './dom.js';
+import {options} from './options.js';
+import {TrackerDOMTable, formatTime} from './util.js';
 import {lang} from './lang.js';
 
 export var logger = {
-    log: function (msg, timeout = 3) {
+    log: function (msg, timeout = options.logger.messageDelay) {
         console.log(msg);
         this.update(msg, timeout);
+        this.addToHistory(msg);
     },
-    error: function (e, timeout = 3) {
+    error: function (e, timeout = options.logger.messageDelay) {
         console.log(e);
         var msg = e.code ? lang[e.type][e.code] : e.message;
         this.update(msg, timeout);
+        this.addToHistory(msg);
     },
-    info: function (msg, timeout = 3) {
+    info: function (msg, timeout = options.logger.messageDelay) {
         this.update(msg, timeout);
     },
     timer: null,
-    pane: loggerInfo.pane,
+    pane: loggerPane.pane,
     update: function (msg, timeout) {
         this.cancel();
         this.pane.innerHTML = msg;
@@ -33,6 +37,27 @@ export var logger = {
             this.timer = null;
             this.pane.hidden = true;
         }
+    },
+    history: [],
+    historyPane: scrollPane,
+    addToHistory: function (msg) {
+        if (this.history.length >= options.logger.historyLength)
+            this.history.pop();
+        this.history.unshift({time: Date.now(), message: msg});
+    },
+    showHistory: function () {
+        this.historyPane.paneTitle.innerHTML = 
+                lang.msgHistory + this.history.length;
+        var tdt = new TrackerDOMTable();
+        for (var i = 0; i < this.history.length; i++) {
+            tdt.addRow([this.history.length-i,
+                formatTime(Date.now() - this.history[i].time) + " "
+                        + this.history[i].message
+            ]);
+        }
+        scrollPane.scrollArea.innerHTML = '';
+        scrollPane.scrollArea.appendChild(tdt.tableNode);
+        scrollPane.pane.hidden = false;
     }
 
 };

@@ -6,14 +6,18 @@ import {lang} from './lang.js';
 
 export var options = {
     mode: '', // debug, demo, watch
-    websocket: '', // WebSocket address
-    watch: 5, // seconds 
+    websocket: '', // WebSocket URI
+    watch: 5, // seconds, waiting time for location determination
     track: {
         deviation: 7, // degrees
         minDistance: 20, // meters min track segment length
         maxDistance: 1000 // meters
     },
-    outdatingDelay: 5, // seconds
+    outdatingDelay: 5, // seconds, check outdated objects
+    logger: {
+        messageDelay: 3,
+        historyLength: 20
+    },
     map: {
         defaultZoom: 16, // default zoom
         minZoom: 4

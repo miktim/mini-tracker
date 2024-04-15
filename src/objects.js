@@ -29,7 +29,7 @@ export function Source(s) {
     this.id = 'LiteRadar tracker'; // required, string, unique 'transponder' id
     this.name = 'tracker'; // string, 'transponder' name
     this.iconid = 0; //
-    this.point = [undefined,undefined]; 
+    this.point = [undefined, undefined];
 //    this.latitude = undefined; // required, degrees (-90 : 90), WGS-84
 //    this.longitude = undefined; // required, degrees (-180 : 180), WGS-84
     this.accuracy = undefined; // required, meters (0:..., radius)
@@ -60,23 +60,6 @@ export function Source(s) {
     update(this, s);
 }
 
-export function Evented(extension = {}) {
-    var evented = new EventTarget(); 
-    evented.on = function (event, listener) {
-        this.addEventListener(event, listener);
-        return this;
-    };
-    evented.once = function (event, listener) {
-        this.addEventListener(event, listener, {once: true});
-        return this;
-    };
-    evented.off = function (event, listener) {
-        this.removeEventListener(event, listener);
-        return this;
-    };
-    return extend(evented, extension);
-}
-
 export function checkSource(src) {
     if (!(src.id
             && src.point[0] && src.point[0].between(-90, 90) // latitude
@@ -97,15 +80,32 @@ export function checkSource(src) {
         let prevPos = prevSrc.point;
         src.heading = geoUtil.heading(prevPos, pos);
         src.speed = geoUtil.distance(prevPos, pos) /
-               ((src.timestamp - prevSrc.timestamp) / 1000);
+                ((src.timestamp - prevSrc.timestamp) / 1000);
     }
+}
+
+export function Evented(extension = {}) {
+    var evented = new EventTarget();
+    evented.on = function (event, listener) {
+        this.addEventListener(event, listener);
+        return this;
+    };
+    evented.once = function (event, listener) {
+        this.addEventListener(event, listener, {once: true});
+        return this;
+    };
+    evented.off = function (event, listener) {
+        this.removeEventListener(event, listener);
+        return this;
+    };
+    return extend(evented, extension);
 }
 
 export function Message(m) {
     this.message = m;
     this.update = function () {
         interfaces.javascript.from(merge({action: 'update:message'}, this));
-    return this;
+        return this;
     };
 }
 
@@ -119,20 +119,33 @@ export function SourceListEntry(src, tracked) {
     this.source = src;
     this.tracked = tracked;
 }
-// TODO remove after 5 outdates
+
+export function MessageHistoryEntry(time, message) {
+    this.time = time;
+    this.message = message;
+}
+
+// TODO remove after 10 outdates, getSource
 export var objectsWatcher = {
     interval: null,
 
     start(delay = options.outdatingDelay) { //delay in seconds
         this.stop();
         if (!this.interval)
-            this.interval = setInterval(function () {
+            this.interval = setInterval(function (removeDelay) {
                 for (var id in trackerObjects) {
                     var obj = trackerObjects[id];
-                    if ('outdated' in obj)
-                        obj.outdated();
+                    if ('outdated' in obj) {
+                        var src = obj.getSource();
+                        var timeToDie = src.timestamp + (src.timeout * 1000);
+                        if (timeToDie + removeDelay < Date.now()) {
+                            obj.remove(); // remove from map
+                            delete trackerObjects[id];
+                        } else if (timeToDie < Date.now())
+                            obj.outdated();
+                    }
                 }
-            }, delay * 1000);
+            }, delay * 1000, delay*10000);
     },
 
     stop() {

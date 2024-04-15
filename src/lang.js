@@ -8,6 +8,7 @@ import {update} from './util.js';
 export var lang = {
     lang: 'en-US',
     ownName: "It's me",
+    msgReady: "Tracker ready",
     msgLocWaiting: 'Waiting for a location...',
     locationerror: [
         'Geolocation error: no such service',
@@ -26,9 +27,11 @@ export var lang = {
     msgWsOpen: 'WebSocket is open: ',
     msgWsClosed: 'WebSocket closed: ',
     errWebSocket: 'WebSocket connection failed: ', //???
+    actionHistory: 'Message history',
     actionShowAll: 'Show all objects',
     actionSetCenter: 'Center map to location',
     actionSearch: ' Search',
+    msgHistory: 'Message history: ',
     msgWildcards: 'Search wildcards: ? *',
     msgFound: 'Found: ',
     msgNotFound: 'Nothing found...',
@@ -49,6 +52,7 @@ var langs = [];
 langs['ru'] = {
     lang: 'ru-RU',
     ownName: 'Это я',
+    msgReady: "Трекер загружен",
     msgLocWaiting: 'Ожидаю координаты...',
     locationerror: [
         'Ошибка геолокации: не поддерживается',
@@ -60,8 +64,10 @@ langs['ru'] = {
     msgWsClosed: 'WebSocket закрыт: ',
     errWebSocket: 'WebSocket ошибка соединения: ', //???
     actionShowAll: 'Показать все объекты',
+    actionHistory: 'История сообщений',
     actionSetCenter: 'Центрировать по месту',
     actionSearch: ' Поиск',
+    msgHistory: 'История сообщений: ',
     msgWildcards: 'Символы подстановки: ? *',
     msgFound: 'Найдено: ',
     msgNotFound: 'Ничего не найдено...',

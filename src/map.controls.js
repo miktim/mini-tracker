@@ -8,7 +8,7 @@ var mapControls = [
     new (L.Control.extend({
         options: {position: 'bottomright'},
         onAdd: function (map) {
-            return dom.loggerInfo.pane;
+            return dom.loggerPane.pane;
         }
     })),
 
