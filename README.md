@@ -42,8 +42,8 @@ The objects are represented by an icon and a circle with a radius equal to the a
   
 Controls at the screen top right:
 - field to search objects by name. You can use wildcards in the file search style: ? - any single character, * - any characters. Tap the name to locate the object. 
-- button to display the message history. 
-- button to display all objects on the screen.  
+- button to display the message history. The messages in the lower right corner of the screen are visible for a few seconds. The next message overlaps the previous one.
+- button to fit all objects into the screen.  
 - button for centering the map according to your own location.  
 
 #### 2.2 Tracking  
