@@ -41,7 +41,8 @@ Track your own location:
 The objects are represented by an icon and a circle with a radius equal to the accuracy of the coordinates. Objects with an expired timeout dim.
   
 Controls at the screen top right:
-- field to search objects by name. You can use wildcards in the file search style: ? - any single character, * - any characters. Tap the name to locate the object.  
+- field to search objects by name. You can use wildcards in the file search style: ? - any single character, * - any characters. Tap the name to locate the object. 
+- button to display the message history. 
 - button to display all objects on the screen.  
 - button for centering the map according to your own location.  
 
