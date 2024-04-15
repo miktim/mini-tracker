@@ -3,7 +3,7 @@
  */
 import {map} from "./map.js";
 import {options} from './options.js';
-import {lang} from './lang.js';
+import {lang} from './messages.js';
 import {interfaces} from './exchanger.js';
 import {merge, update, extend} from './util.js';
 import {tracker} from './tracker.js';
@@ -15,7 +15,6 @@ Number.prototype.between = function (min, max) {
 
 export var trackerObjects = [];
 
-// TODO events: update
 export function TrackerError(code = 0, object) {
     this.code = code;
     this.message = lang.trackererror[code];
@@ -36,7 +35,7 @@ export function Source(s) {
     this.speed = 0; // meters per second (0:...) (GNSS)
     this.heading = 0; // degrees (0:360) counting clockwise from true North (GNSS)
     this.timestamp = Date.now(); // acquired time in milliseconds (EpochTimeStamp)
-    this.timeout = options.outdatingDelay; // seconds (0:...) location lifetime
+    this.timeout = options.watch; // seconds (0:...) location lifetime
 
     this.getLatLng = function () {
         return {lat: this.point[0], lng: this.point[1]};
@@ -61,7 +60,7 @@ export function Source(s) {
 }
 
 export function checkSource(src) {
-    if (!(src.id
+    if (!(src.id && src.point
             && src.point[0] && src.point[0].between(-90, 90) // latitude
             && src.point[1] && src.point[1].between(-180, 180) // longitude
             && src.accuracy && src.accuracy > 0
@@ -120,32 +119,28 @@ export function SourceListEntry(src, tracked) {
     this.tracked = tracked;
 }
 
-export function MessageHistoryEntry(time, message) {
-    this.time = time;
-    this.message = message;
-}
-
 // TODO remove after 10 outdates, getSource
 export var objectsWatcher = {
     interval: null,
 
-    start(delay = options.outdatingDelay) { //delay in seconds
+    start(delay = options.watch*2) { //delay in seconds
         this.stop();
         if (!this.interval)
-            this.interval = setInterval(function (removeDelay) {
+            this.interval = setInterval(function () {
                 for (var id in trackerObjects) {
                     var obj = trackerObjects[id];
                     if ('outdated' in obj) {
                         var src = obj.getSource();
-                        var timeToDie = src.timestamp + (src.timeout * 1000);
-                        if (timeToDie + removeDelay < Date.now()) {
+                        var timeToDie = src.timestamp + (src.timeout * 10000);
+                        var timeToDim = src.timestamp + (src.timeout * 1000);
+                        if (timeToDie < Date.now()) {
                             obj.remove(); // remove from map
                             delete trackerObjects[id];
-                        } else if (timeToDie < Date.now())
+                        } else if (timeToDim < Date.now())
                             obj.outdated();
                     }
                 }
-            }, delay * 1000, delay*10000);
+            }, delay * 1000);
     },
 
     stop() {

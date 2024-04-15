@@ -1,5 +1,5 @@
 /* 
- * LiteRadar tracker, MIT (c) 2019-2023 miktim@mail.ru
+ * LiteRadar tracker, MIT (c) 2019-2024 miktim@mail.ru
  * Geodetic functions
  */
 

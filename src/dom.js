@@ -2,25 +2,41 @@
  * LiteRadar tracker, MIT (c) 2019-2024 miktim@mail.ru
  */
 import {createDOMElement, formatTime, TrackerDOMTable} from './util.js';
-import {lang} from './lang.js';
+import {lang} from './messages.js';
 import {map} from './map.js';
 import {logger} from './logger.js';
 
-/*
- function TrackerPane(style) {
- this.pane = createDOMElement('div', style||'tracker-pane');
- this.pane.hidden=true;
- };
- 
- function TrackerList(style) {
- 
- };
- */
-export var mainMenu = {
-    pane: null
-};
-mainMenu.pane = createDOMElement('div', 'tracker-button');
+function TrackerPane(style = 'tracker-pane', hidden = false) {
+    this.pane = createDOMElement('div', style);
+    this.pane.hidden = hidden;
+}
 
+function TrackerTitledPane(style = 'tracker-pane', hidden = true) {
+    this.pane = createDOMElement('div', 'tracker-pane');
+    this.pane.hidden = hidden;
+//    this.divTitle;
+//    this.divContent;
+    var div = createDOMElement('div', 'tracker-title', this.pane);
+    this.divTitle = createDOMElement('div', 'tracker-title-text', div);
+    var img = createDOMElement('img', 'tracker-title', div);
+    img.src = './images/btn_close.png';
+    img.onclick = (function (e) {
+        this.hide();
+    }).bind(this);
+    this.divContent = createDOMElement('div', style, this.pane);
+    this.show = function(title, content) {
+        this.divTitle.innerHTML = title;
+        this.divContent.innerHTML = '';
+        this.divContent.appendChild(content);
+        this.pane.hidden = false;
+    };
+    this.hide = function() {
+        this.pane.hidden = true;
+    };
+}
+
+export var mainMenu = new TrackerPane('tracker-button');
+// TODO function addButton
 export var createMainMenu = function () {
     var pane = mainMenu.pane;
 
@@ -65,37 +81,8 @@ export var createMainMenu = function () {
     inp.autocomplete = 'off';
 };
 
-export var scrollPane = {
-    pane: null,
-    paneTitle: null,
-    scrollArea: null
-};
-
-// TODO pane prototypes: TrackerPane, TrackerHeadedPane (onclose) 
-var createPaneHeader = function (paneObj, style = 'tracker-pane') {
-    var pane = createDOMElement('div', style);
-    pane.hidden = true;
-    paneObj.pane = pane;
-    var div = createDOMElement('div', 'tracker-title', pane);
-    paneObj.paneTitle = createDOMElement('div', 'tracker-title-text', div);
-//objectList.paneTitle = div;
-    var img = createDOMElement('img', 'tracker-title', div);
-    img.src = './images/btn_close.png';
-    img.onclick = function (e) {
-        paneObj.pane.hidden = true;
-    };
-};
-
-export var infoPane = {
-    pane: null,
-    paneTitle: null,
-    infoArea: null
-};
-createPaneHeader(infoPane); //,'tracker-info-pane');
-infoPane.infoArea = createDOMElement('div', 'tracker-pane', infoPane.pane);
-//infoPane.pane.style.zIndex = 900;
-
-infoPane.infoArea.onclick = function (e) {
+export var infoPane = new TrackerTitledPane();
+infoPane.divContent.onclick = function (e) {
     var pane = infoPane.pane;
     if (!pane.style.marginLeft) {
         pane.style.marginLeft = '-130px';
@@ -107,12 +94,11 @@ infoPane.infoArea.onclick = function (e) {
 // TODO prompt to shift left
 export var trackInfo = {
     create: function (info, title) {
-        infoPane.pane.hidden = true;
-        infoPane.paneTitle.innerHTML = title;
-        infoPane.infoArea.innerHTML = '';
+        infoPane.divTitle.innerHTML = title;
+        infoPane.divContent.innerHTML = '';
         infoPane.pane.hidden = false;
-        var clientRect = infoPane.infoArea.getBoundingClientRect();
-        var table = new TrackerDOMTable({rowClasses:['','tracker-cell-wide']});
+        var clientRect = infoPane.divContent.getBoundingClientRect();
+        var table = new TrackerDOMTable({rowClasses: ['', 'tracker-cell-wide']});
         table.tableNode.style.maxWidth = Math.max(200, clientRect.width) + 'px';
         table.addRow([lang.tblNodeInfo[0], info.index + 1]);
         table.addRow([lang.tblNodeInfo[1], formatTime(info.totalTime)]);
@@ -120,23 +106,18 @@ export var trackInfo = {
         table.addRow([lang.tblNodeInfo[3], (info.speed * 3.6).toFixed(0)]);
         table.addRow([lang.tblNodeInfo[4], info.heading ? info.heading.toFixed(1) : '-']);
         table.addRow([lang.tblNodeInfo[5], info.course ? info.course.toFixed(1) : '-']);
-        infoPane.infoArea.appendChild(table.tableNode);
-//        infoPane.pane.hidden = false;
+        infoPane.show(title,table.tableNode);
     }
 };
 
-
-createPaneHeader(scrollPane);
-scrollPane.scrollArea = createDOMElement('div', 'tracker-scroll', scrollPane.pane);
-//scrollPane.pane.style.zIndex = 1100;
-
-var setScrollPaneSize = function () {
+export var scrollPane = new TrackerTitledPane('tracker-scroll');
+var setScrollPaneSize = function (e) {
     var newHeight = ((window.innerHeight || document.documentElement.clientHeight) - 145) + 'px';
     var newWidth = ((window.innerWidth || document.documentElement.clientWidth) - 25) + 'px';
-    if (newHeight !== scrollPane.scrollArea.style.maxHeight ||
-            newWidth !== scrollPane.scrollArea.style.maxWidth) {
-        scrollPane.scrollArea.style.maxHeight = newHeight;
-        scrollPane.scrollArea.style.maxWidth = newWidth;
+    if (newHeight !== scrollPane.divContent.style.maxHeight ||
+            newWidth !== scrollPane.divContent.style.maxWidth) {
+        scrollPane.divContent.style.maxHeight = newHeight;
+        scrollPane.divContent.style.maxWidth = newWidth;
     }
 };
 setScrollPaneSize();
@@ -154,14 +135,14 @@ onWindowSizeChange(setScrollPaneSize);
 // TODO mark outdated
 export var objectList = {
     create: function (list, title) {
-        scrollPane.pane.hidden = true;
+        scrollPane.hide();
         var listLength = list.length;
         if (listLength === 0) {
             logger.info(lang.msgNotFound);
             return;
         }
-        scrollPane.paneTitle.innerHTML = title + listLength;
-        scrollPane.scrollArea.innerHTML = '';
+        title += listLength;
+
         var table = new TrackerDOMTable({header: lang.hdrSourceTable});
         table.tableNode.onclick = function (e) {
             if (e.target.tagName.toLowerCase() === 'td') {
@@ -195,13 +176,9 @@ export var objectList = {
                 (new Date(src.timestamp)).toLocaleString(), // TODO swap date/time
                 src.id]);
         }
-        scrollPane.scrollArea.appendChild(table.tableNode);
-        scrollPane.pane.hidden = false;
+        scrollPane.show(title, table.tableNode);
         logger.info(lang.msgTapToLocate);
     }
 };
 
-export var loggerPane = {
-    pane: createDOMElement('div', 'tracker-console')
-};
-loggerPane.pane.hidden = true;
+export var loggerPane = new TrackerPane('tracker-console',true);

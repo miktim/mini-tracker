@@ -7,8 +7,8 @@ import {update} from './util.js';
 // TODO trackererror[]
 export var lang = {
     lang: 'en-US',
-    ownName: "It's me",
-    msgReady: "Tracker ready",
+    ownName: "I",
+    msgReady: "Tracker v%1$ ready",
     msgLocWaiting: 'Waiting for a location...',
     locationerror: [
         'Geolocation error: no such service',
@@ -26,7 +26,6 @@ export var lang = {
     ], //???
     msgWsOpen: 'WebSocket is open: ',
     msgWsClosed: 'WebSocket closed: ',
-    errWebSocket: 'WebSocket connection failed: ', //???
     actionHistory: 'Message history',
     actionShowAll: 'Show all objects',
     actionSetCenter: 'Center map to location',
@@ -51,8 +50,8 @@ export var lang = {
 var langs = [];
 langs['ru'] = {
     lang: 'ru-RU',
-    ownName: 'Это я',
-    msgReady: "Трекер загружен",
+    ownName: 'Я',
+    msgReady: "Трекер v%1$ готов к работе",
     msgLocWaiting: 'Ожидаю координаты...',
     locationerror: [
         'Ошибка геолокации: не поддерживается',
@@ -62,7 +61,6 @@ langs['ru'] = {
         'Ошибка геолокации: сервис недоступен'],
     msgWsOpen: 'WebSocket открыт: ',
     msgWsClosed: 'WebSocket закрыт: ',
-    errWebSocket: 'WebSocket ошибка соединения: ', //???
     actionShowAll: 'Показать все объекты',
     actionHistory: 'История сообщений',
     actionSetCenter: 'Центрировать по месту',

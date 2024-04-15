@@ -6,7 +6,7 @@ import {options} from './options.js';
 import {bearing, heading, distance} from './geoUtil.js';
 import {toPosition, format} from './util.js';
 import {trackInfo} from './dom.js';
-import {lang} from './lang.js';
+import {lang} from './messages.js';
 
 export function Track(map, trackLayer) {
     this.map = map;

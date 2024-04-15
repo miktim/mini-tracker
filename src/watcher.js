@@ -9,7 +9,7 @@ import {Source} from './objects.js';
 import {update, extend} from './util.js';
 import {logger} from './logger.js';
 //import {exchanger} from './exchanger.js';
-import {lang} from './lang.js';
+import {lang} from './messages.js';
 
 export var geolocationWatcher = {
     watchId : null,

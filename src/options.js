@@ -2,7 +2,7 @@
  * LiteRadar tracker, MIT (c) 2019-2023 miktim@mail.ru
  */
 import {update, getUrlSearchParameter} from './util.js';
-import {lang} from './lang.js';
+import {lang} from './messages.js';
 
 export var options = {
     mode: '', // debug, demo, watch

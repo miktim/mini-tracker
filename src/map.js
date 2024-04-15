@@ -2,9 +2,9 @@
  * LiteRadar Leaflet mini tracker, MIT (c) 2019-2023 miktim@mail.ru
  */
 import {logger} from "./logger.js";
-import {extend, toPosition} from './util.js';
+import {extend, toPosition, format} from './util.js';
 import {options} from './options.js';
-import {lang} from './lang.js';
+import {lang} from './messages.js';
 import {MapSource, SourceListEntry, trackerObjects} from './objects.js';
 import {createControls} from './map.controls.js'
 import {Track} from './map.track.js';
@@ -24,7 +24,7 @@ function fireTrackerReadyEvent() {
     };
     interfaces.websocket.to(JSON.stringify(map.trackerReady));
     interfaces.webview.to(JSON.stringify(map.trackerReady));
-    logger.log(lang.msgReady);
+    logger.log(format(lang.msgReady, tracker.version));
     tracker.dispatchEvent(new TrackerReadyEvent());
 }
 

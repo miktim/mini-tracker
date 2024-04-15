@@ -4,7 +4,7 @@
 import {loggerPane, scrollPane} from './dom.js';
 import {options} from './options.js';
 import {TrackerDOMTable, formatTime} from './util.js';
-import {lang} from './lang.js';
+import {lang} from './messages.js';
 
 export var logger = {
     log: function (msg, timeout = options.logger.messageDelay) {
@@ -39,25 +39,22 @@ export var logger = {
         }
     },
     history: [],
-    historyPane: scrollPane,
     addToHistory: function (msg) {
         if (this.history.length >= options.logger.historyLength)
             this.history.pop();
         this.history.unshift({time: Date.now(), message: msg});
     },
     showHistory: function () {
-        this.historyPane.paneTitle.innerHTML = 
+        var title =
                 lang.msgHistory + this.history.length;
         var tdt = new TrackerDOMTable();
         for (var i = 0; i < this.history.length; i++) {
-            tdt.addRow([this.history.length-i,
-                formatTime(Date.now() - this.history[i].time) + " "
-                        + this.history[i].message
+            tdt.addRow([this.history.length - i,
+                new Date(this.history[i].time).toLocaleTimeString()
+                        + " " + this.history[i].message
             ]);
         }
-        scrollPane.scrollArea.innerHTML = '';
-        scrollPane.scrollArea.appendChild(tdt.tableNode);
-        scrollPane.pane.hidden = false;
+        scrollPane.show(title, tdt.tableNode);
     }
 
 };

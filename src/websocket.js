@@ -4,7 +4,8 @@
 import {options} from './options.js';
 import {interfaces} from './exchanger.js';
 import {logger} from './logger.js';
-import {lang} from './lang.js';
+import {format} from './util.js';
+import {lang} from './messages.js';
 
 export var webSocket = {
     subprotocol: 'tracker.miktim.org',
@@ -39,16 +40,17 @@ export var webSocket = {
         }
     }
 };
-
+ 
 var onClose = (function (e) {
-    if (!this.error)
-        logger.log(lang.msgWsClosed + e.target.url, 10); // TODO close code, reason
+//    if (!this.error)
+    var reason = e.reason ? e.reason : (this.error ? 'Error' : '');
+    logger.log(lang.msgWsClosed + e.code + ' ' + reason, 10); // TODO e.reason
     this.websocket = null;
     this.error = null;
 }).bind(webSocket);
 
 var onError = (function (e) { // ???
     this.error = e;
-    e.message = lang.errWebSocket + e.target.url;
-    logger.error(e);
+//    e.message = lang.errWebSocket + e.target.url;
+//    logger.error(e);
 }).bind(webSocket);
