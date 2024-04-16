@@ -19,7 +19,7 @@ The tracker is designed for mobile browsers to visualize tracked objects or your
 
   - lang = browser defaults or en_US Supported: en_US, ru_RU
 
-  - websocket = undefined WebSocketURI:  
+  - websocket = undefined WebSocket URI as: ws://host:port/path  
     Note: WebSocket protocol depends on the page protocol: http - ws,  https - wss.
     
     
@@ -42,14 +42,38 @@ The objects are represented by an icon and a circle with a radius equal to the a
   
 Controls at the screen top right:
 - field to search objects by name. You can use wildcards in the file search style: ? - any single character, * - any characters. Tap the name to locate the object. 
-- button to display the message history. The messages in the lower right corner of the screen are visible for a few seconds. The next message overlaps the previous one.
+- button to display the message history. The message in the bottom right of the screen is visible for a few seconds. The next message overlaps the previous one.
 - button to fit all objects into the screen.  
 - button for centering the map according to your own location.  
 
 #### 2.2 Tracking  
 
-Tap the icon of the object to start tracking. Tap the icon again to stop it. Tap the track node info panel (contents may vary) to slide it to the left. Tap the node accuracy circle to show node info.  
-<br>
+- Tap the icon of the object to start tracking. Tap the icon again to stop it. The next track deletes the previous one.
+- Tap the node accuracy circle to show node info. Tap the track node info panel (contents may vary) to slide it to the left.
+- Double-tap on the tracking polyline to copy it to the clipboard in GeoJSON format. Example:  
+```
+{
+  "type":"Feature",
+  "properties":{
+    "name":"Demo27",
+    "accuracy":[18.4,21.3,11.2],
+    "timestamp":[
+      1713272554362,
+      1713272557359,
+      1713272563359
+     ]
+  },
+  "geometry":{
+    "type":"LineString",
+    "coordinates":[
+      [-0.000247,51.47594],
+      [-0.000069,51.475576],
+      [0.000723,51.475228]
+    ]
+  }
+}
+```  
+
 <img
   src="./markdown/track.png"
   alt="Track" height=400 width=240/>  

@@ -24,7 +24,7 @@ function fireTrackerReadyEvent() {
     };
     interfaces.websocket.to(JSON.stringify(map.trackerReady));
     interfaces.webview.to(JSON.stringify(map.trackerReady));
-    logger.log(format(lang.msgReady, tracker.version));
+    logger.log(format(lang.fmtReady, tracker.version));
     tracker.dispatchEvent(new TrackerReadyEvent());
 }
 

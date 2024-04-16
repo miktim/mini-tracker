@@ -50,9 +50,9 @@ td.tracker-table, th.tracker-table, .tracker-cell, .tracker-cell-number, .tracke
     color: white;
 }
 
-/* The title of the list with the close button */
-.tracker-title {
-    background-color: darkgray;
+/* The title of the pane with the close button */
+.tracker-title, th.tracker-table {
+    background-color: rgb(96,96,96);
 }
 .tracker-title-text {
     display: inline-block;

@@ -3,10 +3,11 @@
  */
 
 import {options} from './options.js';
-import {bearing, heading, distance} from './geoUtil.js';
-import {toPosition, format} from './util.js';
-import {trackInfo} from './dom.js';
+import {heading, distance} from './geoUtil.js';
+//import {toPosition} from './util.js';
+import {trackInfo, infoPane} from './dom.js';
 import {lang} from './messages.js';
+import {logger} from './logger.js';
 
 export function Track(map, trackLayer) {
     this.map = map;
@@ -14,7 +15,7 @@ export function Track(map, trackLayer) {
     this.marker = null;
     this.name = '';
     this.nodes = [];
-    this.track = L.polyline([], {weight: 2, color: 'blue'});
+    this.track = L.polyline([], {weight: 3, color: 'blue'});
     this.rubberThread = L.polyline([], {weight: 2, color: 'red'});
     this.lastLatLng = null;
     this.lastHeading = 0;
@@ -33,6 +34,7 @@ export function Track(map, trackLayer) {
         this.rubberThread.setLatLngs([latLng, latLng]).addTo(this.layer);
         this.track.addTo(this.layer);
         this.name = marker.source.name;
+        this.track.bindTooltip(lang.msgNodeInfo + this.name,{className: 'tracker-tooltip'});
         this.lastLatLng = latLng;
         this.lastHeading = marker.source.heading || 0;
         this.nodes = [];
@@ -59,7 +61,7 @@ export function Track(map, trackLayer) {
             } else {
                 var nodeEntry = this.getNodeEntry(this.nodes.length - 1);
                 nodeEntry.course = hdng;
-                trackInfo.create(nodeEntry, format(lang.hdrNodeInfo, this.name));
+                trackInfo.create(nodeEntry, lang.msgNodeInfo + this.name);
             }
             this.map.setView(newLatLng, this.map.getZoom());
         }
@@ -67,7 +69,7 @@ export function Track(map, trackLayer) {
 
     this.addTrackNode = function (source, distance) {
         this.lastLatLng = source.getLatLng();
-        this.track.addLatLng(this.lastLatLng);
+        this.track.addLatLng(this.lastLatLng).bringToFront();
         var node = L.circle(
                 this.lastLatLng, source.accuracy, {weight: 1, color: 'blue'})
                 .addTo(this.layer);
@@ -81,15 +83,44 @@ export function Track(map, trackLayer) {
     this.TrackNodeInfo = function (i, timestamp, dist) {
         return {i: i, // node index
             timestamp: timestamp,
-            distance: dist, 
+            distance: dist,
             path: (i === 0 ? 0 : this.nodes[i - 1].info.path + dist)
         };
     };
 
+    this.stop = function () {
+        this.marker.off('move', this.onMarkerMove);
+        this.rubberThread.setLatLngs([]);
+        this.marker = null;
+        infoPane.hide();
+    };
+
+    this.remove = function () {
+        this.track.setLatLngs([]).unbindTooltip();
+        this.layer.clearLayers();
+    };
+
+    Number.prototype.roundTo = function (dec) {
+        return Number.parseFloat(this.toFixed(dec));
+    };
+
+    this.track.on('dblclick', function (e) {
+        var geoJson = this.track.toGeoJSON(6);
+        geoJson.properties.name = this.name;
+        geoJson.properties.accuracy = [];
+        geoJson.properties.timestamp = [];
+        for(var i = 0; i < geoJson.geometry.coordinates.length; i++){
+            geoJson.properties.accuracy.push(this.nodes[i].getRadius().roundTo(1));
+            geoJson.properties.timestamp.push(this.nodes[i].info.timestamp);
+        }
+        navigator.clipboard.writeText(JSON.stringify(geoJson));
+        logger.log(lang.msgGeoJSON);
+    }.bind(this));
+
     this.onNodeClick = (function (e) {
         var node = e.sourceTarget;
         var nodeEntry = this.getNodeEntry(node.info.i);
-        trackInfo.create(nodeEntry, format(lang.hdrNodeInfo, this.name));
+        trackInfo.create(nodeEntry, lang.msgNodeInfo + this.name);
     }).bind(this);
 
     this.getNodeEntry = function (i) {
@@ -109,16 +140,5 @@ export function Track(map, trackLayer) {
                     )
         };
         return nodeEntry;
-    };
-
-    this.stop = function () {
-        this.marker.off('move', this.onMarkerMove);
-        this.rubberThread.setLatLngs([]);
-        this.marker = null;
-    };
-
-    this.remove = function () {
-        this.track.setLatLngs([]);
-        this.layer.clearLayers();
     };
 }

@@ -13,8 +13,6 @@ Number.prototype.between = function (min, max) {
     return this >= min && this <= max;
 };
 
-export var trackerObjects = [];
-
 export function TrackerError(code = 0, object) {
     this.code = code;
     this.message = lang.trackererror[code];
@@ -22,7 +20,7 @@ export function TrackerError(code = 0, object) {
     this.trackerObj = object;
 //    this.stack;
 }
-TrackerError.prototype = new Error();  // ???
+TrackerError.prototype = new Error();  //
 
 export function Source(s) {
     this.id = 'LiteRadar tracker'; // required, string, unique 'transponder' id
@@ -36,28 +34,32 @@ export function Source(s) {
     this.heading = 0; // degrees (0:360) counting clockwise from true North (GNSS)
     this.timestamp = Date.now(); // acquired time in milliseconds (EpochTimeStamp)
     this.timeout = options.watch; // seconds (0:...) location lifetime
+    update(this, s);
+}
 
-    this.getLatLng = function () {
+Source.prototype = {
+    getLatLng : function () {
         return {lat: this.point[0], lng: this.point[1]};
-    };
-    this.setLatLng = function (latlng) {
+    },
+    setLatLng : function (latlng) {
         this.point[0] = latlng.lat;
         this.point[1] = latlng.lng;
         return this;
-    };
-    this.getPosition = function () {
+    },
+    getPosition : function () {
         return this.point;
-    };
-    this.setPosition = function (position) {
+    },
+    setPosition : function (position) {
         this.point = position;
         return this;
-    };
-    this.update = function () { // TODO boolean options {broadcast, silent}
+    },
+    update : function () { 
         interfaces.javascript.from(merge({action: 'update:locationsource'}, this));
         return this;
-    };
-    update(this, s);
-}
+    }
+};
+
+export var trackerObjects = [];
 
 export function checkSource(src) {
     if (!(src.id && src.point
@@ -69,6 +71,8 @@ export function checkSource(src) {
     }
     src.name = src.name || 'unknown';
     src.timeout = src.timeout || options.outdatingDelay;
+    src.speed = src.speed || 0;
+    src.heading = src.heading || 0;
     let prevSrc = trackerObjects[src.id]; // map depended
     if (prevSrc) {
         prevSrc = prevSrc.getSource();
@@ -123,7 +127,7 @@ export function SourceListEntry(src, tracked) {
 export var objectsWatcher = {
     interval: null,
 
-    start(delay = options.watch*2) { //delay in seconds
+    start(delay = options.outdatingDelay) { //delay in seconds
         this.stop();
         if (!this.interval)
             this.interval = setInterval(function () {

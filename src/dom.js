@@ -1,10 +1,47 @@
 /* 
  * LiteRadar tracker, MIT (c) 2019-2024 miktim@mail.ru
  */
-import {createDOMElement, formatTime, TrackerDOMTable} from './util.js';
+import {formatTime} from './util.js';
 import {lang} from './messages.js';
 import {map} from './map.js';
 import {logger} from './logger.js';
+
+export function createDOMElement(tagName, className, container) {
+    var el = document.createElement(tagName);
+    if (className)
+        el.className = className;
+    if (container) {
+        container.appendChild(el);
+    }
+    return el;
+}
+
+function addDOMTableRow(rowData = [], rowClasses = [], tableEl, tag = 'td') {
+    var rowEl = createDOMElement('tr', 'tracker-table', tableEl);
+    for (var coli = 0; coli < rowData.length; coli++) {
+        var className = rowClasses[coli] ? rowClasses[coli] : 'tracker-table';
+        createDOMElement(tag, className, rowEl).innerHTML = rowData[coli];
+    }
+}
+
+export function TrackerDOMTable(tableInfo = {}) {
+    this.tableNode = createDOMElement('table', 'tracker-table');
+    this.tableInfo = tableInfo;
+    this.addRow = function (rowData, rowCls = this.tableInfo.rowClasses) {
+        addDOMTableRow(rowData, rowCls, this.tableNode, 'td');
+    };
+    this.addHeader = function (rowData, rowCls = this.tableInfo.headerClasses) {
+        addDOMTableRow(rowData, rowCls, this.tableNode, 'th');
+    };
+    if ('header' in tableInfo) {
+        this.addHeader(tableInfo.header);
+    }
+    if ('table' in tableInfo) {
+        for (var rowi = 0; rowi < tableInfo.table.length; rowi++) {
+            this.addRow(tableInfo.table[rowi]);
+        }
+    }
+}
 
 function TrackerPane(style = 'tracker-pane', hidden = false) {
     this.pane = createDOMElement('div', style);
@@ -14,8 +51,6 @@ function TrackerPane(style = 'tracker-pane', hidden = false) {
 function TrackerTitledPane(style = 'tracker-pane', hidden = true) {
     this.pane = createDOMElement('div', 'tracker-pane');
     this.pane.hidden = hidden;
-//    this.divTitle;
-//    this.divContent;
     var div = createDOMElement('div', 'tracker-title', this.pane);
     this.divTitle = createDOMElement('div', 'tracker-title-text', div);
     var img = createDOMElement('img', 'tracker-title', div);
@@ -91,7 +126,6 @@ infoPane.divContent.onclick = function (e) {
     }
 };
 
-// TODO prompt to shift left
 export var trackInfo = {
     create: function (info, title) {
         infoPane.divTitle.innerHTML = title;

@@ -55,7 +55,7 @@ var demo = {
         var dist = this.randDbl(10, 50); // distance in meters
         d.setPosition(Tracker.geoUtil.radialPoint(d.getPosition(), d.heading, dist));
         d.speed = dist / ((Date.now() - d.timestamp) / 1000); //meters per second
-        d.accuracy = this.randDbl(10, 50); // radius!
+        d.accuracy = this.randDbl(10, 25); // radius!
         d.timestamp = Date.now();
         return d;
     },

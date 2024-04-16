@@ -13,7 +13,7 @@ export var options = {
         minDistance: 20, // meters min track segment length
         maxDistance: 1000 // meters
     },
-    outdatingDelay: 5, // seconds, check outdated objects
+    outdatingDelay: 10, // seconds, check outdated objects
     logger: {
         messageDelay: 3,
         historyLength: 20

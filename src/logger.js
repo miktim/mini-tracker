@@ -1,29 +1,28 @@
 /* 
  * LiteRadar tracker logger, MIT (c) 2019-2024 miktim@mail.ru
  */
-import {loggerPane, scrollPane} from './dom.js';
+import {loggerPane, scrollPane, TrackerDOMTable} from './dom.js';
 import {options} from './options.js';
-import {TrackerDOMTable, formatTime} from './util.js';
 import {lang} from './messages.js';
 
 export var logger = {
-    log: function (msg, timeout = options.logger.messageDelay) {
+    log: function (msg, timeout) {
         console.log(msg);
         this.update(msg, timeout);
         this.addToHistory(msg);
     },
-    error: function (e, timeout = options.logger.messageDelay) {
+    error: function (e, timeout) {
         console.log(e);
         var msg = e.code ? lang[e.type][e.code] : e.message;
         this.update(msg, timeout);
         this.addToHistory(msg);
     },
-    info: function (msg, timeout = options.logger.messageDelay) {
+    info: function (msg, timeout) {
         this.update(msg, timeout);
     },
     timer: null,
     pane: loggerPane.pane,
-    update: function (msg, timeout) {
+    update: function (msg, timeout = options.logger.messageDelay) {
         this.cancel();
         this.pane.innerHTML = msg;
         this.pane.hidden = false;

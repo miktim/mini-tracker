@@ -8,7 +8,7 @@ import {update} from './util.js';
 export var lang = {
     lang: 'en-US',
     ownName: "I",
-    msgReady: "Tracker v%1$ ready",
+    fmtReady: "Tracker v%1$ ready",
     msgLocWaiting: 'Waiting for a location...',
     locationerror: [
         'Geolocation error: no such service',
@@ -25,7 +25,7 @@ export var lang = {
         'Internal error'
     ], //???
     msgWsOpen: 'WebSocket is open: ',
-    msgWsClosed: 'WebSocket closed: ',
+    fmtWsClosed: 'WebSocket closed: %1$ %2$',
     actionHistory: 'Message history',
     actionShowAll: 'Show all objects',
     actionSetCenter: 'Center map to location',
@@ -37,7 +37,8 @@ export var lang = {
     msgTapToLocate: 'Tap the name to locate',
     hdrSourceTable: ['', 'Name', 'LAT,deg', 'LON,deg', 'ACC,m', 'HDG,deg','SPD,km/h', 'Timestamp'],
 //    msgTrackToClipboard: "Track's GeoJSON copied to clipboard",
-    hdrNodeInfo: 'Track: %1$',
+    msgGeoJSON: 'GeoJSON of the track in the clipboard',
+    msgNodeInfo: 'Track: ',
     tblNodeInfo: ['Node','Time', 'Path,km', 'Speed,km/h', 'Heading,deg', 'Course,deg'],
     actionAbout: 'About',
     set: function () {
@@ -51,7 +52,7 @@ var langs = [];
 langs['ru'] = {
     lang: 'ru-RU',
     ownName: 'Я',
-    msgReady: "Трекер v%1$ готов к работе",
+    fmtReady: "Трекер v%1$ готов к работе",
     msgLocWaiting: 'Ожидаю координаты...',
     locationerror: [
         'Ошибка геолокации: не поддерживается',
@@ -60,7 +61,7 @@ langs['ru'] = {
         'Ошибка геолокации: таймаут',
         'Ошибка геолокации: сервис недоступен'],
     msgWsOpen: 'WebSocket открыт: ',
-    msgWsClosed: 'WebSocket закрыт: ',
+    fmtWsClosed: 'WebSocket закрыт:  %1$ %2$',
     actionShowAll: 'Показать все объекты',
     actionHistory: 'История сообщений',
     actionSetCenter: 'Центрировать по месту',
@@ -71,8 +72,8 @@ langs['ru'] = {
     msgNotFound: 'Ничего не найдено...',
     msgTapToLocate: 'Для показа коснитесь имени',
     hdrSourceTable: ['', 'Имя', 'Широта,deg', 'Долгота,deg', 'Точность,m', 'Пеленг,deg','Скорость,km/h', 'Время'],
-//    msgTrackToClipboard: "Track's GeoJSON copied to clipboard",
-    hdrNodeInfo: 'Трек: %1$',
+    msgGeoJSON: 'GeoJSON трека в буфере обмена',
+    msgNodeInfo: 'Трек: ',
     tblNodeInfo: ['Узел','Время', 'Путь,km', 'Скорость,km/h', 'Пеленг,deg', 'Курс,deg'],
     actionAbout: 'About'
     

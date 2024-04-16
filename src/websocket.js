@@ -44,7 +44,7 @@ export var webSocket = {
 var onClose = (function (e) {
 //    if (!this.error)
     var reason = e.reason ? e.reason : (this.error ? 'Error' : '');
-    logger.log(lang.msgWsClosed + e.code + ' ' + reason, 10); // TODO e.reason
+    logger.log(format(lang.fmtWsClosed, e.code, reason), 10); // TODO e.reason
     this.websocket = null;
     this.error = null;
 }).bind(webSocket);

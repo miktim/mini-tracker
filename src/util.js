@@ -43,43 +43,6 @@ export function merge(target, ...sources) {
     return target;
 }
 
-export function createDOMElement(tagName, className, container) {
-    var el = document.createElement(tagName);
-    if (className)
-        el.className = className;
-    if (container) {
-        container.appendChild(el);
-    }
-    return el;
-}
-
-function addDOMTableRow(rowData = [], rowClasses = [], tableEl, tag = 'td') {
-    var rowEl = createDOMElement('tr', 'tracker-table', tableEl);
-    for (var coli = 0; coli < rowData.length; coli++) {
-        var className = rowClasses[coli] ? rowClasses[coli] : 'tracker-table';
-        createDOMElement(tag, className, rowEl).innerHTML = rowData[coli];
-    }
-}
-
-export function TrackerDOMTable(tableInfo = {}) {
-    this.tableNode = createDOMElement('table', 'tracker-table');
-    this.tableInfo = tableInfo;
-    this.addRow = function (rowData, rowCls = this.tableInfo.rowClasses) {
-        addDOMTableRow(rowData, rowCls, this.tableNode, 'td');
-    };
-    this.addHeader = function (rowData, rowCls = this.tableInfo.headerClasses) {
-        addDOMTableRow(rowData, rowCls, this.tableNode, 'th');
-    };
-    if ('header' in tableInfo) {
-        this.addHeader(tableInfo.header);
-    }
-    if ('table' in tableInfo) {
-        for (var rowi = 0; rowi < tableInfo.table.length; rowi++) {
-            this.addRow(tableInfo.table[rowi]);
-        }
-    }
-}
-
 export function format(pattern, ...args) {
     for (var i = 0;
     i < args.length; i++) {
