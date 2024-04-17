@@ -4,26 +4,24 @@
  * See https://w3c.github.io/geolocation-api/#examples
  */
 import {options} from './options.js';
-//import {map} from './map.js';
 import {Source} from './objects.js';
-import {update, extend} from './util.js';
+import {update} from './util.js';
 import {logger} from './logger.js';
-//import {exchanger} from './exchanger.js';
 import {lang} from './messages.js';
 
 export var geolocationWatcher = {
-    watchId : null,
-    interval : null,
+    watchId: null,
+    interval: null,
     timeout: 0,
-    lastSource : null,
+    lastSource: null,
 
     start(timeout = options.watch, highAccuracy = true) {
         this.timeout = timeout;
         if (!('geolocation' in navigator)) {
             logger.error({
                 type: 'locationerror',
-                code: 4,
-                message: lang.locationerror[4]
+                code: 0,
+                message: lang.locationerror[0]
             });
             return;
         }
@@ -40,7 +38,7 @@ export var geolocationWatcher = {
                 }
         );
         this.interval = setInterval(function (self) {
-            if(self.lastSource.accuracy) {
+            if (self.lastSource.accuracy) {
                 self.lastSource.update();
                 renewLastSource();
             }
@@ -57,12 +55,11 @@ export var geolocationWatcher = {
     }
 };
 
-var renewLastSource = (function() {
-     this.lastSource = new Source({
-         name: lang.ownName,
-//         accuracy: 1000000, 
-         iconid: 4,
-         timeout: this.timeout});
+var renewLastSource = (function () {
+    this.lastSource = new Source({
+        name: lang.ownName,
+        iconid: 4,
+        timeout: this.timeout});
 }).bind(geolocationWatcher);
 
 var onLocationFound = (function (l) {
@@ -75,6 +72,9 @@ var onLocationFound = (function (l) {
 }).bind(geolocationWatcher);
 
 var onLocationError = (function (e) {
-    logger.error(extend(e,{type:'locationerror'}));
+    if (e.type === 'locationerror')
+        logger.log('Watcher. ' + lang.locationerror[e.code]);
+    else
+        logger.error(e);
 }).bind(geolocationWatcher);
 

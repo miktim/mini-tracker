@@ -5,6 +5,7 @@ import {logger} from "./logger.js";
 import {extend, toPosition, format} from './util.js';
 import {options} from './options.js';
 import {lang} from './messages.js';
+import {scrollPane, TrackerDOMTable} from './dom.js';
 import {MapSource, SourceListEntry, trackerObjects} from './objects.js';
 import {createControls} from './map.controls.js'
 import {Track} from './map.track.js';
@@ -18,7 +19,7 @@ function TrackerReadyEvent() {
 }
 
 function fireTrackerReadyEvent() {
-    map.trackerReady = { 
+    map.trackerReady = {
         event: 'ready:tracker:' + tracker.version,
         mapCenter: toPosition(map.getCenter())
     };
@@ -83,12 +84,9 @@ MapSource.prototype.getSource = function () {
     return this.marker.source;
 };
 MapSource.prototype.outdated = function () {
-//    var src = this.getSource(); // TODO see objectsWatcher
-//    if (src.timestamp + (src.timeout * 1000) < Date.now())
-        this.marker.setOpacity(0.4);
+    this.marker.setOpacity(0.4);
 };
 MapSource.prototype.remove = function () {
-// this.marker, this.accuracyCircle remove from map.trackerObjectLayer
     this.marker.removeFrom(map.trackerObjectLayer);
     this.accuracyCircle.removeFrom(map.trackerObjectLayer);
 };
@@ -125,7 +123,7 @@ var __map = {
         return list;
     },
 
-    locateObject: function (objid) {
+    locateTrackerObject: function (objid) {
         var marker = trackerObjects[objid].marker;
         var tmarker = this.tracking.marker || marker;
         if (marker === tmarker) {
@@ -154,7 +152,52 @@ var __map = {
         }
     },
 
+    showObjectList(criteria) {
+        scrollPane.hide();
+        var list = this.searchObjectsByName(criteria);
+// TODO mark outdated
+        if (list.length === 0) {
+            logger.info(lang.msgNotFound);
+            return;
+        }
+        var title = lang.msgFound + list.length;
+
+        var table = new TrackerDOMTable();
+
+        table.tableNode.onclick = function (e) {
+            if (e.target.tagName.toLowerCase() === 'td') {
+                var objid = e.target.parentNode.lastChild.innerHTML;
+                this.locateTrackerObject(objid);
+                scrollPane.pane.hidden = true;
+            }
+        }.bind(this);
+
+        let d = lang.dict;
+        table.addHeader(['', d.nme, d.lat, d.lng, d.acc, d.hdg, d.spd, d.tms]);
+        let cn = 'tracker-cell-number';
+        table.tableInfo.rowClasses = [
+            cn, '', cn, cn, cn, cn, cn, '', 'tracker-invisible'
+        ];
+        for (var i = 0; i < list.length; i++) {
+            var obj = list[i];
+            var src = obj.source;
+            table.addRow([
+                (obj.tracked ? '*' : '') + (i + 1),
+                src.name,
+                src.getPosition()[0].toFixed(7), // latitude
+                src.getPosition()[1].toFixed(7), // longitude
+                src.accuracy.toFixed(1),
+                src.heading ? src.heading.toFixed(1) : '-',
+                src.speed ? (src.speed * 3.6).toFixed(0) : '-', // km/h
+                (new Date(src.timestamp)).toLocaleString(), // TODO? swap date/time
+                src.id]);
+        }
+        scrollPane.show(title, table.tableNode);
+        logger.info(lang.msgTapToLocate);
+    },
+    
     trackerIcons: [],
+    trackerColors: ['darkgray', 'blue', 'green', 'red', 'yellow'],
 
     getTrackerIcon: function (iconid = 2) {
         iconid = Math.max(0, Math.min(iconid, this.trackerIcons.length - 1));
@@ -178,7 +221,6 @@ var __map = {
         var srcLatLng = src.getLatLng();
         if (!mapObject) {
             mapObject = new MapSource(src);
-            mapObject.objectMap = this;
             mapObject.marker =
                     L.marker(srcLatLng)//, {icon: icon}, alt: src.id, title: src.name})
                     .bindTooltip(mapObject.name, {className: 'tracker-tooltip'})
@@ -191,12 +233,12 @@ var __map = {
                     this.tracking.stop();
             }).bind(this);
             mapObject.marker.on('click', onMarkerClick);
-            mapObject.accuracyCircle = L.circle(srcLatLng, Math.min(src.accuracy, 1500),
+            mapObject.marker.accuracyCircle = L.circle(srcLatLng, Math.min(src.accuracy, 1500),
                     {weight: 1, color: 'blue'}).addTo(this.trackerObjectLayer);
             trackerObjects[src.id] = mapObject;
         } else {
-            mapObject.accuracyCircle.setLatLng(srcLatLng);
-            mapObject.accuracyCircle.setRadius(Math.min(src.accuracy, 1500));
+            mapObject.marker.accuracyCircle.setLatLng(srcLatLng);
+            mapObject.marker.accuracyCircle.setRadius(Math.min(src.accuracy, 1500));
             mapObject.marker.source = src; // before marker move!
             mapObject.marker.setLatLng(srcLatLng);
         }

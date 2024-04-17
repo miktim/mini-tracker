@@ -13,9 +13,9 @@ export var webSocket = {
     error: null,
     start(host = options.websocket) {
         if (host && !this.websocket) {
-            var wsurl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') +
-                    host.replace('ws:', '').replace('wss:', '');
             try {
+                var wsurl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') +
+                        host.replace('ws:', '').replace('wss:', '');
                 this.websocket = new WebSocket(wsurl, this.subprotocol);
                 this.websocket.onmessage = function (e) {
                     if (typeof e.data === 'string')
@@ -32,7 +32,8 @@ export var webSocket = {
     }
     },
     send(message) {
-       if(this.websocket) this.websocket.send(message);  
+        if (this.websocket)
+            this.websocket.send(message);
     },
     stop() {
         if (this.websocket) {
@@ -40,17 +41,17 @@ export var webSocket = {
         }
     }
 };
- 
+
 var onClose = (function (e) {
-//    if (!this.error)
-    var reason = e.reason ? e.reason : (this.error ? 'Error' : '');
-    logger.log(format(lang.fmtWsClosed, e.code, reason), 10); // TODO e.reason
+    if (this.error)
+        logger.log(lang.msgWsError + e.code);
+    else
+        logger.log(format(lang.fmtWsClosed, e.code, e.reason), 10); // TODO e.reason
     this.websocket = null;
     this.error = null;
 }).bind(webSocket);
 
-var onError = (function (e) { // ???
+var onError = (function (e) { 
     this.error = e;
-//    e.message = lang.errWebSocket + e.target.url;
-//    logger.error(e);
+// websocket.onclose is called anyway
 }).bind(webSocket);

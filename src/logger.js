@@ -51,7 +51,7 @@ export var logger = {
             tdt.addRow([this.history.length - i,
                 new Date(this.history[i].time).toLocaleTimeString()
                         + " " + this.history[i].message
-            ]);
+            ],['tracker-cell-number']);
         }
         scrollPane.show(title, tdt.tableNode);
     }

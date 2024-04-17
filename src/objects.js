@@ -73,6 +73,7 @@ export function checkSource(src) {
     src.timeout = src.timeout || options.outdatingDelay;
     src.speed = src.speed || 0;
     src.heading = src.heading || 0;
+    src.iconid = (src.iconid && src.iconid.between(0,4)) || 0;
     let prevSrc = trackerObjects[src.id]; // map depended
     if (prevSrc) {
         prevSrc = prevSrc.getSource();

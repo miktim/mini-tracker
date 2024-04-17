@@ -26,6 +26,7 @@ export var lang = {
     ], //???
     msgWsOpen: 'WebSocket is open: ',
     fmtWsClosed: 'WebSocket closed: %1$ %2$',
+    msgWsError: 'WebSocket error: ',
     actionHistory: 'Message history',
     actionShowAll: 'Show all objects',
     actionSetCenter: 'Center map to location',
@@ -36,10 +37,23 @@ export var lang = {
     msgNotFound: 'Nothing found...',
     msgTapToLocate: 'Tap the name to locate',
     hdrSourceTable: ['', 'Name', 'LAT,deg', 'LON,deg', 'ACC,m', 'HDG,deg','SPD,km/h', 'Timestamp'],
-//    msgTrackToClipboard: "Track's GeoJSON copied to clipboard",
     msgGeoJSON: 'GeoJSON of the track in the clipboard',
-    msgNodeInfo: 'Track: ',
+    msgTrack: 'Track: ',
     tblNodeInfo: ['Node','Time', 'Path,km', 'Speed,km/h', 'Heading,deg', 'Course,deg'],
+    dict: {
+        nme: 'Name',
+        lat: 'LAT,deg',
+        lng: 'LON,deg',
+        acc: 'ACC,m',
+        hdg: 'HDG,deg',
+        crs: 'CRS,deg',
+        spd: 'SPD,km/h',
+        dis: 'DIS,km',
+        tms: 'Timestamp',
+        tme: 'Time',
+        nde: 'Node',
+        pth: 'Path,km'
+    },
     actionAbout: 'About',
     set: function () {
         var langsKey = options.lang.split('-')[0].split('_')[0];
@@ -47,7 +61,7 @@ export var lang = {
             update(this,langs[langsKey]);
     }
 };
-// TODO lang ru-RU
+
 var langs = [];
 langs['ru'] = {
     lang: 'ru-RU',
@@ -62,6 +76,7 @@ langs['ru'] = {
         'Ошибка геолокации: сервис недоступен'],
     msgWsOpen: 'WebSocket открыт: ',
     fmtWsClosed: 'WebSocket закрыт:  %1$ %2$',
+    msgWsError: 'Ошибка WebSocket: ',
     actionShowAll: 'Показать все объекты',
     actionHistory: 'История сообщений',
     actionSetCenter: 'Центрировать по месту',
@@ -71,10 +86,22 @@ langs['ru'] = {
     msgFound: 'Найдено: ',
     msgNotFound: 'Ничего не найдено...',
     msgTapToLocate: 'Для показа коснитесь имени',
-    hdrSourceTable: ['', 'Имя', 'Широта,deg', 'Долгота,deg', 'Точность,m', 'Пеленг,deg','Скорость,km/h', 'Время'],
     msgGeoJSON: 'GeoJSON трека в буфере обмена',
-    msgNodeInfo: 'Трек: ',
-    tblNodeInfo: ['Узел','Время', 'Путь,km', 'Скорость,km/h', 'Пеленг,deg', 'Курс,deg'],
+    msgTrack: 'Трек: ',
+    dict: {
+        nme: 'Имя',
+        lat: 'LAT,deg',
+        lng: 'LON,deg',
+        acc: 'ACC,m',
+        hdg: 'HDG,deg',
+        crs: 'CRS,deg',
+        spd: 'SPD,km/h',
+        tms: 'Штамп времени',
+        tme: 'Время',
+        dis: 'DIS,km',
+        nde: 'Узел',
+        pth: 'Путь,km'
+    },
     actionAbout: 'About'
     
 };

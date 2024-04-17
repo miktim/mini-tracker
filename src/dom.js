@@ -22,16 +22,17 @@ function addDOMTableRow(rowData = [], rowClasses = [], tableEl, tag = 'td') {
         var className = rowClasses[coli] ? rowClasses[coli] : 'tracker-table';
         createDOMElement(tag, className, rowEl).innerHTML = rowData[coli];
     }
+    return rowEl;
 }
 
 export function TrackerDOMTable(tableInfo = {}) {
     this.tableNode = createDOMElement('table', 'tracker-table');
     this.tableInfo = tableInfo;
     this.addRow = function (rowData, rowCls = this.tableInfo.rowClasses) {
-        addDOMTableRow(rowData, rowCls, this.tableNode, 'td');
+        return addDOMTableRow(rowData, rowCls, this.tableNode, 'td');
     };
     this.addHeader = function (rowData, rowCls = this.tableInfo.headerClasses) {
-        addDOMTableRow(rowData, rowCls, this.tableNode, 'th');
+        return addDOMTableRow(rowData, rowCls, this.tableNode, 'th');
     };
     if ('header' in tableInfo) {
         this.addHeader(tableInfo.header);
@@ -40,7 +41,7 @@ export function TrackerDOMTable(tableInfo = {}) {
         for (var rowi = 0; rowi < tableInfo.table.length; rowi++) {
             this.addRow(tableInfo.table[rowi]);
         }
-    }
+}
 }
 
 function TrackerPane(style = 'tracker-pane', hidden = false) {
@@ -59,13 +60,13 @@ function TrackerTitledPane(style = 'tracker-pane', hidden = true) {
         this.hide();
     }).bind(this);
     this.divContent = createDOMElement('div', style, this.pane);
-    this.show = function(title, content) {
+    this.show = function (title, content) {
         this.divTitle.innerHTML = title;
         this.divContent.innerHTML = '';
         this.divContent.appendChild(content);
         this.pane.hidden = false;
     };
-    this.hide = function() {
+    this.hide = function () {
         this.pane.hidden = true;
     };
 }
@@ -105,8 +106,11 @@ export var createMainMenu = function () {
     frm.onsubmit = function (e) {
 // https://stackoverflow.com/questions/4276754/is-it-possible-to-remove-the-focus-from-a-text-input-when-a-page-loads
         document.activeElement.blur(); // remove focus, close keyboard
-        var objList = map.searchObjectsByName(e.target.searchCriteria.value);
-        objectList.create(objList, lang.msgFound);
+        try {
+            map.showObjectList(e.target.searchCriteria.value);
+        } catch (e) {
+            logger.error(e);
+        }
         return false;
     };
     var inp = createDOMElement('input', 'tracker-search', frm);
@@ -116,31 +120,14 @@ export var createMainMenu = function () {
     inp.autocomplete = 'off';
 };
 
-export var infoPane = new TrackerTitledPane();
+export var infoPane = new TrackerTitledPane('tracker-pane');
 infoPane.divContent.onclick = function (e) {
     var pane = infoPane.pane;
     if (!pane.style.marginLeft) {
-        pane.style.marginLeft = '-130px';
+        var clientRect = infoPane.divContent.getBoundingClientRect();
+        pane.style.marginLeft = -(clientRect.width - 25) + 'px';
     } else {
         pane.style.marginLeft = '';
-    }
-};
-
-export var trackInfo = {
-    create: function (info, title) {
-        infoPane.divTitle.innerHTML = title;
-        infoPane.divContent.innerHTML = '';
-        infoPane.pane.hidden = false;
-        var clientRect = infoPane.divContent.getBoundingClientRect();
-        var table = new TrackerDOMTable({rowClasses: ['', 'tracker-cell-wide']});
-        table.tableNode.style.maxWidth = Math.max(200, clientRect.width) + 'px';
-        table.addRow([lang.tblNodeInfo[0], info.index + 1]);
-        table.addRow([lang.tblNodeInfo[1], formatTime(info.totalTime)]);
-        table.addRow([lang.tblNodeInfo[2], (info.path / 1000).toFixed(3)]);
-        table.addRow([lang.tblNodeInfo[3], (info.speed * 3.6).toFixed(0)]);
-        table.addRow([lang.tblNodeInfo[4], info.heading ? info.heading.toFixed(1) : '-']);
-        table.addRow([lang.tblNodeInfo[5], info.course ? info.course.toFixed(1) : '-']);
-        infoPane.show(title,table.tableNode);
     }
 };
 
@@ -166,53 +153,4 @@ var onWindowSizeChange = function (handler) {
 };
 onWindowSizeChange(setScrollPaneSize);
 
-// TODO mark outdated
-export var objectList = {
-    create: function (list, title) {
-        scrollPane.hide();
-        var listLength = list.length;
-        if (listLength === 0) {
-            logger.info(lang.msgNotFound);
-            return;
-        }
-        title += listLength;
-
-        var table = new TrackerDOMTable({header: lang.hdrSourceTable});
-        table.tableNode.onclick = function (e) {
-            if (e.target.tagName.toLowerCase() === 'td') {
-                var objid = e.target.parentNode.lastChild.innerHTML;
-                map.locateObject(objid);
-                scrollPane.pane.hidden = true;
-            }
-        };
-        table.tableInfo.rowClasses = [
-            'tracker-cell-number',
-            '',
-            'tracker-cell-number',
-            'tracker-cell-number',
-            'tracker-cell-number',
-            'tracker-cell-number',
-            'tracker-cell-number',
-            '',
-            'tracker-invisible'
-        ];
-        for (var i = 0; i < listLength; i++) {
-            var obj = list[i];
-            var src = obj.source;
-            table.addRow([
-                (obj.tracked ? '*' : '') + (i + 1),
-                src.name,
-                src.getPosition()[0].toFixed(7), // latitude
-                src.getPosition()[1].toFixed(7), // longitude
-                src.accuracy.toFixed(1),
-                src.heading ? src.heading.toFixed(1) : '-',
-                src.speed ? (src.speed * 3.6).toFixed(0) : '-', // km/h
-                (new Date(src.timestamp)).toLocaleString(), // TODO swap date/time
-                src.id]);
-        }
-        scrollPane.show(title, table.tableNode);
-        logger.info(lang.msgTapToLocate);
-    }
-};
-
-export var loggerPane = new TrackerPane('tracker-console',true);
+export var loggerPane = new TrackerPane('tracker-console', true);
