@@ -5,7 +5,7 @@
 
 import {options} from './options.js';
 import {heading, distance} from './geoUtil.js';
-import {formatTime} from './util.js';
+import {formatTime, format} from './util.js';
 import {infoPane, createDOMElement, TrackerDOMTable} from './dom.js';
 import {lang} from './messages.js';
 import {logger} from './logger.js';
@@ -36,13 +36,14 @@ export function Track(map, trackLayer) {
 //        this.color = map.trackerColors[marker.source.iconid];
         this.name = marker.source.name;
         this.track.addTo(this.layer);//.setStyle({color: this.color});
-        this.track.bindTooltip(lang.msgNodeInfo + this.name, {className: 'tracker-tooltip'});
+        this.track.bindTooltip(lang.msgTrack + this.name, {className: 'tracker-tooltip'});
         this.lastLatLng = latLng;
         this.lastHeading = marker.source.heading || 0;
         this.nodes = [];
         this.addTrackNode(marker.source, 0).fire('click');
         this.marker = marker;
         this.marker.on('move', this.onMarkerMove);
+        logger.log(format(lang.fmtTrkStart, this.name));
     };
 
     this.stop = function () {
@@ -50,6 +51,7 @@ export function Track(map, trackLayer) {
         this.rubberThread.setLatLngs([]);
         this.marker = null;
         infoPane.hide();
+        logger.log(format(lang.fmtTrkStop, this.name));
     };
 
     this.remove = function () {
@@ -70,11 +72,10 @@ export function Track(map, trackLayer) {
                     && Math.abs(this.lastHeading - hdng) > options.track.deviation)
                     || dist > options.track.maxDistance) {
                 this.lastHeading = hdng;
-                this.addTrackNode(this.marker.source, dist)
-                        .fire('click');
+                this.addTrackNode(this.marker.source, dist).fire('click');
             } else {
                 this.marker.accuracyCircle.info =
-                        TrackNodeInfo(this.nodes.length,this.marker.source.timestamp, dist);
+                        this.TrackNodeInfo(this.nodes.length, this.marker.source.timestamp, dist);
                 this.showNodeInfo(this.marker.accuracyCircle);
             }
             this.map.setView(newLatLng, this.map.getZoom());
@@ -105,16 +106,17 @@ export function Track(map, trackLayer) {
     Number.prototype.roundTo = function (dec) {
         return Number.parseFloat(this.toFixed(dec));
     };
-    
+
 // Track GeoJSON to clipboard
     this.track.on('dblclick', function (e) {
         var geoJson = this.track.toGeoJSON(6);
         geoJson.properties.name = this.name;
-        geoJson.properties.accuracy = [];
-        geoJson.properties.timestamp = [];
+        geoJson.properties.nodes = {};
+        geoJson.properties.nodes.accuracy = [];
+        geoJson.properties.nodes.timestamp = [];
         for (var i = 0; i < geoJson.geometry.coordinates.length; i++) {
-            geoJson.properties.accuracy.push(this.nodes[i].getRadius().roundTo(1));
-            geoJson.properties.timestamp.push(this.nodes[i].info.timestamp);
+            geoJson.properties.nodes.accuracy.push(this.nodes[i].getRadius().roundTo(1));
+            geoJson.properties.nodes.timestamp.push(this.nodes[i].info.timestamp);
         }
         navigator.clipboard.writeText(JSON.stringify(geoJson));
         logger.log(lang.msgGeoJSON);
@@ -126,10 +128,12 @@ export function Track(map, trackLayer) {
 
     this.getNodeEntry = function (node) {
         let index = node.info.i;
+        let totalTime = (node.info.timestamp - this.nodes[0].info.timestamp);
         var nodeEntry = {
             index: index,
-            totalTime: (node.info.timestamp - this.nodes[0].info.timestamp),
+            totalTime: totalTime,
             path: node.info.path,
+            speedAvg: (index === 0 ? null : node.info.path / (totalTime/1000) ),
             speed: (index === 0 ? null :
                     (node.info.distance /
                             ((node.info.timestamp - this.nodes[index - 1].info.timestamp) / 1000))),
@@ -142,21 +146,24 @@ export function Track(map, trackLayer) {
         };
         return nodeEntry;
     };
+    
     this.showNodeInfo = function (node) {
-        var info = this.getNodeEntry(node);
-        var table = new TrackerDOMTable({rowClasses: ['', 'tracker-cell-wide']});
+        let entry = this.getNodeEntry(node);
+        let table = new TrackerDOMTable({rowClasses: ['', 'tracker-cell-wide']});
 //            var clientRect = infoPane.divContent.getBoundingClientRect();
 //            table.tableNode.style.maxWidth = Math.max(200, clientRect.width) + 'px';
         table.tableNode.style.maxWidth = '200px';
-        table.addRow([lang.dict.tme, formatTime(info.totalTime)]);
-        table.addRow([lang.dict.pth, (info.path / 1000).toFixed(3)]);
-        table.addRow([lang.dict.nde, (info.index + 1)])
-                .style.backgroundColor = 'rgb(96,96,96)';
-        table.addRow([lang.dict.spd, (info.speed * 3.6).toFixed(0)]);
-        table.addRow([lang.dict.hdg, info.heading ? info.heading.toFixed(1) : '-']);
-        table.addRow([lang.dict.crs, info.course ? info.course.toFixed(1) : '-']);
+        table.addRow([lang.dict.nde, (entry.index + 1)]);
+//                .style.backgroundColor = 'rgb(96,96,96)';
+        table.addRow([lang.dict.tme, formatTime(entry.totalTime)]);
+        table.addRow([lang.dict.pth, (entry.path / 1000).toFixed(3)]);
+        table.addRow([lang.dict.spa, (entry.speedAvg * 3.6).toFixed(0)]);
+        table.addRow([lang.dict.dis, (node.info.distance/1000).toFixed(3)]);
+        table.addRow([lang.dict.spd, (entry.speed * 3.6).toFixed(0)]);
+        table.addRow([lang.dict.hdg, entry.heading ? entry.heading.toFixed(1) : '-']);
+        table.addRow([lang.dict.crs, entry.course ? entry.course.toFixed(1) : '-']);
         infoPane.show(lang.msgTrack + this.name, table.tableNode);
     }.bind(this);
-    
+
 }
-    
+

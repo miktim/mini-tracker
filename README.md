@@ -1,4 +1,4 @@
-## Leaflet based GNSS mini tracker, MIT (c) 2019-2024 @miktim
+## Leaflet/OSM based GNSS mini tracker, MIT (c) 2019-2024 @miktim
 
 The tracker is designed for mobile browsers to visualize tracked objects or your own location. Interaction with the tracker is carried out through the user interface or by exchanging messages in JSON format via WebView, WebSocket or using the JavaScript API.  
 
@@ -54,22 +54,25 @@ Controls at the screen top right:
 ```
 {
   "type":"Feature",
-  "properties":{
-    "name":"Demo27",
-    "accuracy":[18.4,21.3,11.2],
-    "timestamp":[
-      1713272554362,
-      1713272557359,
-      1713272563359
-     ]
+  "properties": {
+    "name":"Demo26",
+    "nodes": {
+      "accuracy": [
+        13.4,
+        10.6,
+        17.1 ],
+      "timestamp": [
+        1714372050703,
+        1714372053719,
+        1714372059719 ]
+    }
   },
-  "geometry":{
+  "geometry": {
     "type":"LineString",
-    "coordinates":[
-      [-0.000247,51.47594],
-      [-0.000069,51.475576],
-      [0.000723,51.475228]
-    ]
+    "coordinates": [
+      [-0.001053,51.477551],
+      [-0.001081,51.47722],
+      [-0.001437,51.476817] ]
   }
 }
 ```  
@@ -77,8 +80,8 @@ Controls at the screen top right:
 <img
   src="./markdown/track.png"
   alt="Track" height=400 width=240/>  
-Heading is the angle in degrees clockwise from true North to the direction from the previous location to the current one.  
-Course is the angle in degrees clockwise from true North to direction from the current to the next node.  
+Heading (HDG) is the angle in degrees clockwise from true North to the direction from the previous location to the current one.  
+Course (CRS) is the angle in degrees clockwise from true North to direction from the current to the next node.  
 Deviation is the angle between heading and course.  
   
 ### 3. Tracker WebView and WebSocket API  

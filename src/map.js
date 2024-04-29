@@ -88,7 +88,7 @@ MapSource.prototype.outdated = function () {
 };
 MapSource.prototype.remove = function () {
     this.marker.removeFrom(map.trackerObjectLayer);
-    this.accuracyCircle.removeFrom(map.trackerObjectLayer);
+    this.marker.accuracyCircle.removeFrom(map.trackerObjectLayer);
 };
 
 var __map = {
@@ -236,6 +236,7 @@ var __map = {
             mapObject.marker.accuracyCircle = L.circle(srcLatLng, Math.min(src.accuracy, 1500),
                     {weight: 1, color: 'blue'}).addTo(this.trackerObjectLayer);
             trackerObjects[src.id] = mapObject;
+            logger.log(format(lang.fmtObjCreate,src.name));
         } else {
             mapObject.marker.accuracyCircle.setLatLng(srcLatLng);
             mapObject.marker.accuracyCircle.setRadius(Math.min(src.accuracy, 1500));

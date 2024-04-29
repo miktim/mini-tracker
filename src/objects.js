@@ -5,7 +5,8 @@ import {map} from "./map.js";
 import {options} from './options.js';
 import {lang} from './messages.js';
 import {interfaces} from './exchanger.js';
-import {merge, update, extend} from './util.js';
+import {merge, update, extend, format} from './util.js';
+import {logger} from './logger.js';
 import {tracker} from './tracker.js';
 import * as geoUtil from "./geoUtil.js";
 
@@ -141,6 +142,7 @@ export var objectsWatcher = {
                         if (timeToDie < Date.now()) {
                             obj.remove(); // remove from map
                             delete trackerObjects[id];
+                            logger.log(format(lang.fmtObjDelete,src.name));
                         } else if (timeToDim < Date.now())
                             obj.outdated();
                     }

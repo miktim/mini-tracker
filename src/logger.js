@@ -38,7 +38,9 @@ export var logger = {
         }
     },
     history: [],
+    historyCount: 0,
     addToHistory: function (msg) {
+        this.historyCount++;
         if (this.history.length >= options.logger.historyLength)
             this.history.pop();
         this.history.unshift({time: Date.now(), message: msg});
@@ -46,9 +48,10 @@ export var logger = {
     showHistory: function () {
         var title =
                 lang.msgHistory + this.history.length;
+        var hc = this.historyCount;
         var tdt = new TrackerDOMTable();
         for (var i = 0; i < this.history.length; i++) {
-            tdt.addRow([this.history.length - i,
+            tdt.addRow([hc--,
                 new Date(this.history[i].time).toLocaleTimeString()
                         + " " + this.history[i].message
             ],['tracker-cell-number']);

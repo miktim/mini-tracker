@@ -125,7 +125,7 @@ infoPane.divContent.onclick = function (e) {
     var pane = infoPane.pane;
     if (!pane.style.marginLeft) {
         var clientRect = infoPane.divContent.getBoundingClientRect();
-        pane.style.marginLeft = -(clientRect.width - 25) + 'px';
+        pane.style.marginLeft = -(clientRect.width - 70)+'px';
     } else {
         pane.style.marginLeft = '';
     }

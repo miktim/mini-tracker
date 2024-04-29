@@ -16,7 +16,7 @@ export var options = {
     outdatingDelay: 10, // seconds, check outdated objects
     logger: {
         messageDelay: 3,
-        historyLength: 20
+        historyLength: 50
     },
     map: {
         defaultZoom: 16, // default zoom

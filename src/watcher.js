@@ -72,7 +72,7 @@ var onLocationFound = (function (l) {
 }).bind(geolocationWatcher);
 
 var onLocationError = (function (e) {
-    if (e.type === 'locationerror')
+    if (e instanceof GeolocationPositionError)
         logger.log('Watcher. ' + lang.locationerror[e.code]);
     else
         logger.error(e);
