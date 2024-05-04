@@ -11,7 +11,7 @@ import * as util from './util.js';
 
 //(function (window, document) {
 export var tracker = new Evented({
-    version: '1.3.2',
+    version: '1.3.3',
     load: function (mapid = 'map', options = {}) {
         loadTracker(mapid, options);
     },

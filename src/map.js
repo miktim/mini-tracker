@@ -87,8 +87,17 @@ MapSource.prototype.outdated = function () {
     this.marker.setOpacity(0.4);
 };
 MapSource.prototype.remove = function () {
+    if (this.tracked()) {
+        this.outdated();
+        return;
+    }    
     this.marker.removeFrom(map.trackerObjectLayer);
     this.marker.accuracyCircle.removeFrom(map.trackerObjectLayer);
+    delete trackerObjects[this.id];
+    logger.log(format(lang.fmtObjDelete, this.name));
+};
+MapSource.prototype.tracked = function () {
+    return map.tracking.marker === this.marker;
 };
 
 var __map = {
@@ -117,7 +126,8 @@ var __map = {
         for (var key in trackerObjects) { // 
             if (rex.test(trackerObjects[key].name)) {
                 var obj = trackerObjects[key];
-                list.push(new SourceListEntry(obj.marker.source, this.tracking.marker === obj.marker));
+//                list.push(new SourceListEntry(obj.marker.source, this.tracking.marker === obj.marker));
+                list.push(new SourceListEntry(obj.getSource(), obj.tracked()));
             }
         }
         return list;
@@ -195,7 +205,7 @@ var __map = {
         scrollPane.show(title, table.tableNode);
         logger.info(lang.msgTapToLocate);
     },
-    
+
     trackerIcons: [],
     trackerColors: ['darkgray', 'blue', 'green', 'red', 'yellow'],
 
@@ -236,7 +246,7 @@ var __map = {
             mapObject.marker.accuracyCircle = L.circle(srcLatLng, Math.min(src.accuracy, 1500),
                     {weight: 1, color: 'blue'}).addTo(this.trackerObjectLayer);
             trackerObjects[src.id] = mapObject;
-            logger.log(format(lang.fmtObjCreate,src.name));
+            logger.log(format(lang.fmtObjCreate, src.name));
         } else {
             mapObject.marker.accuracyCircle.setLatLng(srcLatLng);
             mapObject.marker.accuracyCircle.setRadius(Math.min(src.accuracy, 1500));

@@ -1,5 +1,5 @@
 /* 
- * LiteRadar tracker, MIT (c) 2019-2023 miktim@mail.ru
+ * LiteRadar tracker, MIT (c) 2019-2024 miktim@mail.ru
  */
 import {map} from "./map.js";
 import {options} from './options.js';
@@ -141,8 +141,6 @@ export var objectsWatcher = {
                         var timeToDim = src.timestamp + (src.timeout * 1000);
                         if (timeToDie < Date.now()) {
                             obj.remove(); // remove from map
-                            delete trackerObjects[id];
-                            logger.log(format(lang.fmtObjDelete,src.name));
                         } else if (timeToDim < Date.now())
                             obj.outdated();
                     }
