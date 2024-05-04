@@ -36,7 +36,7 @@ export function Track(map, trackLayer) {
 //        this.color = map.trackerColors[marker.source.iconid];
         this.name = marker.source.name;
         this.track.addTo(this.layer);//.setStyle({color: this.color});
-        this.track.bindTooltip(lang.msgTrack + this.name, {className: 'tracker-tooltip'});
+//        this.track.bindTooltip(lang.msgTrack + this.name, {className: 'tracker-tooltip'});
         this.lastLatLng = latLng;
         this.lastHeading = marker.source.heading || 0;
         this.nodes = [];
@@ -55,7 +55,7 @@ export function Track(map, trackLayer) {
     };
 
     this.remove = function () {
-        this.track.setLatLngs([]).unbindTooltip();
+        this.track.setLatLngs([]);//.unbindTooltip();
         this.layer.clearLayers();
     };
 
