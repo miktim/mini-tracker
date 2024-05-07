@@ -41,7 +41,7 @@ Track your own location:
 The objects are represented by an icon and a circle with a radius equal to the accuracy of the coordinates. Objects with an expired timeout dim.
   
 Controls at the screen top right:
-- field to search objects by name. You can use wildcards in the file search style: ? - any single character, * - any characters. Tap the name to locate the object. 
+- field to search objects by name. You can use wildcards in the file search style: ? - any single character, * - any characters. Tap the name in the list to locate the object. 
 - button to display the message history. The message in the bottom right of the screen is visible for a few seconds. The next message overlaps the previous one.
 - button to fit all objects into the screen.  
 - button for centering the map according to your own location.  
@@ -90,9 +90,9 @@ The tracker communicates with the opposite side (let's call it the "client") via
 - client loads the tracker.html with requred parameters and establishes a connection;  
 - client sends a requests (Actions) in UTF-8 JSON format and receives a responses in UTF-8 JSON format (Events).  
 
-For WebView clients, the tracker has two entry points:  
-- Tracker.webview.toTracker(String actionJson);
-- Tracker.webview.fromTracker(String eventJson).  
+For WebView clients, there are two global entry points:  
+- window.webviewToTracker(\<String> actionJson);
+- window.webviewFromTracker(\<String> eventJson).  
 
 The tracker connects to the WebSocket URI using the "tracker.miktim.org" subprotocol.  
 
@@ -258,7 +258,7 @@ Functions:
 |--------|---------|-------------|
 | distance(\<Point>p1, \<Point>p2) | Number| distance from p1 to p2 in meters |
 | heading(\<Point>p1, \<Point>p2) | Number | calculate angle in degrees clockwise from true North to direction from p1 to p2 |
-| radialPoint(\<Point>p, \<Number>heading, \<Number>distance) | \<Point>  | calculate geographic point from p with given heading and distance |
+| radialPoint(\<Point>p, \<Number>heading, \<Number>distance) | \<Point>  | calculate geographic point from p with given heading (degrees) and distance (meteres)|
 
 \<Point> can be \<LatLng> or \<Position>. Returned value has same type.  
 

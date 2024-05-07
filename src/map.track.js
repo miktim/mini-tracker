@@ -130,9 +130,9 @@ export function Track(map, trackLayer) {
         let index = node.info.i;
         let totalTime = (node.info.timestamp - this.nodes[0].info.timestamp);
         var nodeEntry = {
-            index: index,
+//            index: index,
             totalTime: totalTime,
-            path: node.info.path,
+//            path: node.info.path,
             speedAvg: (index === 0 ? null : node.info.path / (totalTime/1000) ),
             speed: (index === 0 ? null :
                     (node.info.distance /
@@ -153,10 +153,10 @@ export function Track(map, trackLayer) {
 //            var clientRect = infoPane.divContent.getBoundingClientRect();
 //            table.tableNode.style.maxWidth = Math.max(200, clientRect.width) + 'px';
         table.tableNode.style.maxWidth = '200px';
-        table.addRow([lang.dict.nde, (entry.index + 1)]);
+        table.addRow([lang.dict.nde, (node.info.i + 1)]);
 //                .style.backgroundColor = 'rgb(96,96,96)';
         table.addRow([lang.dict.tme, formatTime(entry.totalTime)]);
-        table.addRow([lang.dict.pth, (entry.path / 1000).toFixed(3)]);
+        table.addRow([lang.dict.pth, (node.info.path / 1000).toFixed(3)]);
         table.addRow([lang.dict.spa, (entry.speedAvg * 3.6).toFixed(0)]);
         table.addRow([lang.dict.dis, (node.info.distance/1000).toFixed(3)]);
         table.addRow([lang.dict.spd, (entry.speed * 3.6).toFixed(0)]);
