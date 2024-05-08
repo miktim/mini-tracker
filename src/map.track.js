@@ -1,6 +1,6 @@
 /* 
  * LiteRadar Leaflet mini tracker, MIT (c) 2019-2024 miktim@mail.ru
- * Track object
+ * Track object 
  */
 
 import {options} from './options.js';

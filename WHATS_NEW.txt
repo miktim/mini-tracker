@@ -1,5 +1,5 @@
-1.4.0
-- global functions created: webviewFromTracker, webviewToTracker.
+1.3.4
+- fixed detected bugs
 
 1.3.3
 - disable the deletion of the tracked object.

@@ -22,7 +22,7 @@ export var interfaces = {
             actionJSON(actionJson, "webview");
         },
         to: function (eventJson) {
-
+            tracker.webview.fromTracker(eventJson);
         }
     },
     javascript: {
@@ -106,7 +106,7 @@ function TrackerErrorEvent(e) {
     return event;
 }
 
-export var webview = {
-    toTracker: interfaces.webview.from,
-    fromTracker: interfaces.webview.to
-};
+//export var webview = {
+//    toTracker: interfaces.webview.from,
+//    fromTracker: interfaces.webview.to
+//};

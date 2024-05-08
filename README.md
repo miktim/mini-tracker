@@ -91,8 +91,8 @@ The tracker communicates with the opposite side (let's call it the "client") via
 - client sends a requests (Actions) in UTF-8 JSON format and receives a responses in UTF-8 JSON format (Events).  
 
 For WebView clients, there are two global entry points:  
-- window.webviewToTracker(\<String> actionJson);
-- window.webviewFromTracker(\<String> eventJson).  
+- Tracker.webview.toTracker(String actionJson);
+- Tracker.webview.fromTracker(String eventJson).  
 
 The tracker connects to the WebSocket URI using the "tracker.miktim.org" subprotocol.  
 

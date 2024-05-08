@@ -4,14 +4,14 @@
 
 import {loadTracker} from './loader.js';
 import {Source, Message, Evented} from './objects.js';
-import {webview} from './exchanger.js';
+import {interfaces} from './exchanger.js';
 import {map} from './map.js';
 import * as geoUtil from './geoUtil.js';
 import * as util from './util.js';
 
 //(function (window, document) {
 export var tracker = new Evented({
-    version: '1.4.0',
+    version: '1.3.4',
     load: function (mapid = 'map', options = {}) {
         loadTracker(mapid, options);
     },
@@ -35,11 +35,13 @@ export var tracker = new Evented({
     },
     geoUtil: geoUtil,
     util: util,
-    webview: webview
+    webview: {
+        toTracker: interfaces.webview.from,
+        fromTracker: function(eventJson) {
+        }
+    }
 });
 
 window.Tracker = tracker;
-window.webviewFromTracker = Tracker.webview.fromTracker;
-window.webviewToTracker = Tracker.webview.toTracker;
 
 //}(window, document));
