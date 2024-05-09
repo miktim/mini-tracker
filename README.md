@@ -90,9 +90,20 @@ The tracker communicates with the opposite side (let's call it the "client") via
 - client loads the tracker.html with requred parameters and establishes a connection;  
 - client sends a requests (Actions) in UTF-8 JSON format and receives a responses in UTF-8 JSON format (Events).  
 
-For WebView clients, there are two global entry points:  
+For WebView clients, there are two entry points:  
 - Tracker.webview.toTracker(String actionJson);
 - Tracker.webview.fromTracker(String eventJson).  
+
+To access tracker events from the Android app, redefine the fromTracker function. For example:  
+```
+myView.setWebViewClient(new WebViewClient() {
+  public void onPageFinished(WebView view, String url) {
+    view.loadUrl("javascript: Tracker.webview.fromTracker = 
+      function(event) { Android.fromTracker(event); };");
+  }
+});
+```  
+See also: https://developer.android.com/develop/ui/views/layout/webapps/webview#java
 
 The tracker connects to the WebSocket URI using the "tracker.miktim.org" subprotocol.  
 
