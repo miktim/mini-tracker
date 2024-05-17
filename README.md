@@ -88,7 +88,7 @@ Deviation is the angle between heading and course.
 
 The tracker communicates with the opposite side (let's call it the "client") via WebView or WebSocket in the same way:  
 - client loads the tracker.html with requred parameters and establishes a connection;  
-- client sends a requests (Actions) in UTF-8 JSON format and receives a responses in UTF-8 JSON format (Events).  
+- client sends a requests (Actions) in UTF-8 JSON format and receives a responses (Events) in UTF-8 JSON format.  
 
 For WebView clients, there are two entry points:  
 - Tracker.webview.toTracker(String actionJson);
@@ -96,14 +96,14 @@ For WebView clients, there are two entry points:
 
 To access tracker events from the Android app, redefine the fromTracker function. For example:  
 ```
-myView.setWebViewClient(new WebViewClient() {
+webView.setWebViewClient(new WebViewClient() {
   public void onPageFinished(WebView view, String url) {
     view.loadUrl("javascript: Tracker.webview.fromTracker = 
       function(event) { Android.fromTracker(event); };");
   }
 });
 ```  
-See also: https://developer.android.com/develop/ui/views/layout/webapps/webview#java
+See also: https://developer.android.com/develop/ui/views/layout/webapps/webview#UsingJavaScript
 
 The tracker connects to the WebSocket URI using the "tracker.miktim.org" subprotocol.  
 
