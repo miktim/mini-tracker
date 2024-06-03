@@ -1,5 +1,5 @@
 /* 
- * LiteRadar Leaflet mini tracker, MIT (c) 2019-2023 miktim@mail.ru
+ * LiteRadar Leaflet mini tracker, MIT (c) 2019-2024 miktim@mail.ru
  * Leaflet tracker user interface
  */
 import * as dom from './dom.js';
@@ -35,7 +35,7 @@ var mapControls = [
     new (L.Control.extend({
         options: {position: 'topright'},
         onAdd: function (map) {
-            var pane = dom.scrollPane.pane;
+            var pane = dom.listPane.pane;
             L.DomEvent.disableClickPropagation(pane);
             L.DomEvent.disableScrollPropagation(pane);
             return pane;

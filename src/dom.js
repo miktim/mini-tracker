@@ -25,8 +25,8 @@ function addDOMTableRow(rowData = [], rowClasses = [], tableEl, tag = 'td') {
     return rowEl;
 }
 
-export function TrackerDOMTable(tableInfo = {}) {
-    this.tableNode = createDOMElement('table', 'tracker-table');
+export function TrackerDOMTable(tableInfo = {}, container) {
+    this.tableNode = createDOMElement('table', 'tracker-table', container);
     this.tableInfo = tableInfo;
     this.addRow = function (rowData, rowCls = this.tableInfo.rowClasses) {
         return addDOMTableRow(rowData, rowCls, this.tableNode, 'td');
@@ -120,7 +120,10 @@ export var createMainMenu = function () {
     inp.autocomplete = 'off';
 };
 
-export var infoPane = new TrackerTitledPane('tracker-pane');
+export var infoPane = new TrackerTitledPane('tracker-scroll');
+infoPane.divContent.style.maxHeight = '150px';
+infoPane.divContent.style.width = '200px';
+
 infoPane.divContent.onclick = function (e) {
     var pane = infoPane.pane;
     if (!pane.style.marginLeft) {
@@ -131,14 +134,14 @@ infoPane.divContent.onclick = function (e) {
     }
 };
 
-export var scrollPane = new TrackerTitledPane('tracker-scroll');
+export var listPane = new TrackerTitledPane('tracker-scroll');
 var setScrollPaneSize = function (e) {
     var newHeight = ((window.innerHeight || document.documentElement.clientHeight) - 145) + 'px';
     var newWidth = ((window.innerWidth || document.documentElement.clientWidth) - 25) + 'px';
-    if (newHeight !== scrollPane.divContent.style.maxHeight ||
-            newWidth !== scrollPane.divContent.style.maxWidth) {
-        scrollPane.divContent.style.maxHeight = newHeight;
-        scrollPane.divContent.style.maxWidth = newWidth;
+    if (newHeight !== listPane.divContent.style.maxHeight ||
+            newWidth !== listPane.divContent.style.maxWidth) {
+        listPane.divContent.style.maxHeight = newHeight;
+        listPane.divContent.style.maxWidth = newWidth;
     }
 };
 setScrollPaneSize();

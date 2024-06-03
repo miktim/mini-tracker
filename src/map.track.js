@@ -150,9 +150,7 @@ export function Track(map, trackLayer) {
     this.showNodeInfo = function (node) {
         let entry = this.getNodeEntry(node);
         let table = new TrackerDOMTable({rowClasses: ['', 'tracker-cell-wide']});
-//            var clientRect = infoPane.divContent.getBoundingClientRect();
-//            table.tableNode.style.maxWidth = Math.max(200, clientRect.width) + 'px';
-        table.tableNode.style.maxWidth = '200px';
+//*        table.tableNode.style.maxWidth = '200px';
         table.addRow([lang.dict.nde, (node.info.i + 1)]);
 //                .style.backgroundColor = 'rgb(96,96,96)';
         table.addRow([lang.dict.tme, formatTime(entry.totalTime)]);

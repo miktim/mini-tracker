@@ -5,21 +5,29 @@ The tracker is designed for mobile browsers to visualize tracked objects or your
 ### 1. tracker.html
 
 
-#### 1.1 Tracker html URL query parameters (optional):  
- - mode = nowatch Comma delimited modes:  
-    debug   - debug JavaScript source;  
+#### 1.1 tracker.html query parameters (optional):  
+ - mode = nowatch  
+ Comma delimited modes:  
+    debug   - debug JavaScript sources;  
     watch   - watch own location;  
     nowatch - disable watching own location;  
     demo    - run demo.  
 
-  - watch = 5 Timeout for monitoring location (seconds)  
+  - watch = 5  
+  Timeout for monitoring location (seconds)  
 
-  - track = 7:20:1000 Minimizing track nodes:  
+  - track = 7:20:1000  
+  Minimizing track nodes:  
     deviation(degrees):minDistance(meters):maxDistance(meters)
 
-  - lang = browser defaults or en_US Supported: en_US, ru_RU
+  - lang = en_US  
+  Supported languages: en_US, ru_RU  
 
-  - websocket = undefined WebSocket URI as: ws://host:port/path  
+  - load = undefined  
+    URL of user defined .js. See demo.js as an example. 
+
+  - websocket = undefined  
+    WebSocket URI as: ws://host:port/path  
     Note: WebSocket protocol depends on the page protocol: http - ws,  https - wss.
     
     
@@ -86,7 +94,7 @@ Deviation is the angle between heading and course.
   
 ### 3. Tracker WebView and WebSocket API  
 
-The tracker communicates with the opposite side (let's call it the "client") via WebView or WebSocket in the same way:  
+The tracker communicates with the opposite side (let's call it the "client") via WebView or WebSocket in the similar way:  
 - client loads the tracker.html with requred parameters and establishes a connection;  
 - client sends a requests (Actions) in UTF-8 JSON format and receives a responses (Events) in UTF-8 JSON format.  
 

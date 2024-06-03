@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- LiteRadar Leaflet mini tracker, MIT (c) 2019-2023 miktim@mail.ru -->
+<!-- LiteRadar Leaflet mini tracker, MIT (c) 2019-2024 miktim@mail.ru -->
 <html>
     <head>
         <title>LiteRadar tracker</title>
@@ -45,13 +45,17 @@
                     return (new RegExp('(^|,)' + mode + '(,|$)', 'i')).test(value || '');
                 };
 
-            if (trackerMode('debug'))
-                appendBodyScript("./src/tracker.js", "module");
-            else
-                appendBodyScript("./tracker.js");
+                if (trackerMode('debug'))
+                    appendBodyScript("./src/tracker.js", "module");
+                else
+                    appendBodyScript("./tracker.js");
 
-            if (trackerMode('demo'))
-                appendBodyScript('./demo.js');
+                if (trackerMode('demo'))
+                    appendBodyScript('./demo.js');
+
+                let userjs = getUrlSearchParameter('load');
+                if (userjs)
+                    appendBodyScript(userjs);
             }
         </script>
     </body>

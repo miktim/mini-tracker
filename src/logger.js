@@ -1,7 +1,7 @@
 /* 
  * LiteRadar tracker logger, MIT (c) 2019-2024 miktim@mail.ru
  */
-import {loggerPane, scrollPane, TrackerDOMTable} from './dom.js';
+import {loggerPane, listPane, TrackerDOMTable} from './dom.js';
 import {options} from './options.js';
 import {lang} from './messages.js';
 
@@ -56,7 +56,7 @@ export var logger = {
                         + " " + this.history[i].message
             ],['tracker-cell-number']);
         }
-        scrollPane.show(title, tdt.tableNode);
+        listPane.show(title, tdt.tableNode);
     }
 
 };

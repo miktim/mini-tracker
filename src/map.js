@@ -5,7 +5,7 @@ import {logger} from "./logger.js";
 import {extend, toPosition, format} from './util.js';
 import {options} from './options.js';
 import {lang} from './messages.js';
-import {scrollPane, TrackerDOMTable} from './dom.js';
+import {listPane, TrackerDOMTable} from './dom.js';
 import {MapSource, SourceListEntry, trackerObjects} from './objects.js';
 import {createControls} from './map.controls.js'
 import {Track} from './map.track.js';
@@ -163,7 +163,7 @@ var __map = {
     },
 
     showObjectList(criteria) {
-        scrollPane.hide();
+        listPane.hide();
         var list = this.searchObjectsByName(criteria);
 // TODO mark outdated
         if (list.length === 0) {
@@ -178,7 +178,7 @@ var __map = {
             if (e.target.tagName.toLowerCase() === 'td') {
                 var objid = e.target.parentNode.lastChild.innerHTML;
                 this.locateTrackerObject(objid);
-                scrollPane.pane.hidden = true;
+                listPane.pane.hidden = true;
             }
         }.bind(this);
 
@@ -202,7 +202,7 @@ var __map = {
                 (new Date(src.timestamp)).toLocaleString(), // TODO? swap date/time
                 src.id]);
         }
-        scrollPane.show(title, table.tableNode);
+        listPane.show(title, table.tableNode);
         logger.info(lang.msgTapToLocate);
     },
 
