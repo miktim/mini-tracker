@@ -27,31 +27,33 @@ export function Source(s) {
     this.id = 'LiteRadar tracker'; // required, string, unique 'transponder' id
     this.name = 'tracker'; // string, 'transponder' name
     this.iconid = 0; //
-    this.point = [undefined, undefined];
-//    this.latitude = undefined; // required, degrees (-90 : 90), WGS-84
-//    this.longitude = undefined; // required, degrees (-180 : 180), WGS-84
+//    this.point = [undefined, undefined];
+    this.latitude = undefined; // required, WGS-84 degrees (-90 : 90)
+    this.longitude = undefined; // required, WGS-84 degrees (-180 : 180)
     this.accuracy = undefined; // required, meters (0:..., radius)
-    this.speed = 0; // meters per second (0:...) (GNSS)
+    this.speed = 0; // meters per second (0:...)
     this.heading = 0; // degrees (0:360) counting clockwise from true North (GNSS)
     this.timestamp = Date.now(); // acquired time in milliseconds (EpochTimeStamp)
     this.timeout = options.watch; // seconds (0:...) location lifetime
+    this.interface = ''; // interface name: 'websocket', 'webview', 'javascript'
     update(this, s);
 }
 
 Source.prototype = {
     getLatLng : function () {
-        return {lat: this.point[0], lng: this.point[1]};
+        return {lat: this.latitude, lng: this.longitude};
     },
     setLatLng : function (latlng) {
-        this.point[0] = latlng.lat;
-        this.point[1] = latlng.lng;
+        this.latitude = latlng.lat;
+        this.longitude = latlng.lng;
         return this;
     },
     getPosition : function () {
-        return this.point;
+        return [this.latitude, this.longitude];
     },
     setPosition : function (position) {
-        this.point = position;
+        this.latitude = position[0];
+        this.longitude = position[1];
         return this;
     },
     update : function () { 
@@ -63,9 +65,9 @@ Source.prototype = {
 export var trackerObjects = [];
 
 export function checkSource(src) {
-    if (!(src.id && src.point
-            && src.point[0] && src.point[0].between(-90, 90) // latitude
-            && src.point[1] && src.point[1].between(-180, 180) // longitude
+    if (!(src.id //&& src.point
+            && src.latitude && src.latitude.between(-90, 90) // latitude
+            && src.longitude && src.longitude.between(-180, 180) // longitude
             && src.accuracy && src.accuracy > 0
             && src.timestamp && Date.now() >= src.timestamp)) {
         throw new TrackerError(3, src);
@@ -81,8 +83,8 @@ export function checkSource(src) {
         if (src.timestamp <= prevSrc.timestamp)
             throw new TrackerError(4, src); // outdated location
 // calc heading, speed 
-        let pos = src.point;
-        let prevPos = prevSrc.point;
+        let pos = [src.latitude, src.longitude];
+        let prevPos = [prevSrc.latitude, prevSrc.longitude];
         src.heading = geoUtil.heading(prevPos, pos);
         src.speed = geoUtil.distance(prevPos, pos) /
                 ((src.timestamp - prevSrc.timestamp) / 1000);
@@ -108,6 +110,7 @@ export function Evented(extension = {}) {
 
 export function Message(m) {
     this.message = m;
+    this.interface = '';
     this.update = function () {
         interfaces.javascript.from(merge({action: 'update:message'}, this));
         return this;

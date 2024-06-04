@@ -65,8 +65,8 @@ var renewLastSource = (function () {
 var onLocationFound = (function (l) {
     if (this.lastSource.accuracy > l.coords.accuracy || !this.lastSource.accuracy) {
         update(this.lastSource, l.coords);
-        this.lastSource.setPosition(
-                [l.coords.latitude, l.coords.longitude]);
+//        this.lastSource.setPosition(
+//                [l.coords.latitude, l.coords.longitude]);
         this.lastSource.timestamp = l.timestamp;
     }
 }).bind(geolocationWatcher);

@@ -35,11 +35,14 @@ export var tracker = new Evented({
     },
     geoUtil: geoUtil,
     util: util,
-    webview: {
-        toTracker: interfaces.webview.from,
-        fromTracker: function(eventJson) {
-        }
-    }
+    toWebView: function(eventJson) {
+    },
+    fromWebView: interfaces.webview.from
+//    webview: {
+//        toTracker: interfaces.webview.from,
+//        fromTracker: function(eventJson) {
+//        }
+//    }
 });
 
 window.Tracker = tracker;

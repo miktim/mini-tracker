@@ -57,7 +57,7 @@ Controls at the screen top right:
 #### 2.2 Tracking  
 
 - Tap the icon of the object to start tracking. Tap the icon again to stop it. The next track deletes the previous one.
-- Tap the node accuracy circle to show node info. Tap the track node info panel (contents may vary) to slide it to the left.
+- Tap the node accuracy circle to show node info. Tap the track node info panel (scrolled, contents may vary) to slide it to the left.
 - Double-tap on the tracking polyline to copy it to the clipboard in GeoJSON format. Example:  
 ```
 {
@@ -139,7 +139,8 @@ Request to show an object with a green icon on the map:
   "id":"id Demo1",
   "name":"Demo1",
   "iconid":2,
-  "point":[51.47838445332488,-0.0018107646286580],
+  "latitude":51.47838445332488,
+  "longitude":-0.0018107646286580,
   "accuracy":14.6,
   "timestamp":1711259479572,
   "timeout":3
@@ -173,7 +174,8 @@ Properties:
 |-------------|------|------------|
 | id | String | required, 'transponder' unique id |
 | name | String |required, 'transponder' name |
-| point | [ Number, Number ] | required, WGS-84 latitude and longitude in degrees [ (-90 : 90) , (-180 : 180) ]|
+| latitude | Number | required, WGS-84 latitude in degrees (-90 : 90) |
+| longitude | Number | required, WGS-84 longitude in degrees  (-180 : 180) |
 | accuracy | Number | required, in meters (radius!) |
 | timestamp | Number | required, EpochTimeStamp in MILLISECONDS |
 | iconid | Number | optional, (0 : 4) gray, blue, green, red, yellow |
