@@ -8,7 +8,7 @@ import {format} from './util.js';
 import {lang} from './messages.js';
 
 export var webSocket = {
-    subprotocol: 'tracker.miktim.org',
+    subprotocol: 'tracker.literadar.org',
     websocket: null,
     error: null,
     start(host = options.websocket) {

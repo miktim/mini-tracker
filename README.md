@@ -113,7 +113,7 @@ webView.setWebViewClient(new WebViewClient() {
 ```  
 See also: https://developer.android.com/develop/ui/views/layout/webapps/webview#UsingJavaScript
 
-The tracker connects to the WebSocket URI using the "tracker.miktim.org" subprotocol.  
+The tracker connects to the WebSocket URI using the "tracker.literadar.org" subprotocol.  
 
 Tracker supports two actions:  
 - update location source to show object on the map;

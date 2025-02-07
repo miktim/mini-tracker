@@ -59,7 +59,7 @@ var renewLastSource = (function () {
     this.lastSource = new Source({
         name: lang.ownName,
         iconid: 4,
-        timeout: this.timeout});
+        timeout: this.timeout * 2});
 }).bind(geolocationWatcher);
 
 var onLocationFound = (function (l) {
