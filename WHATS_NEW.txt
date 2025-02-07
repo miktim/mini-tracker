@@ -1,3 +1,6 @@
+1.4.2
+- WebSocket subprotocol: 'tracker.literadar.org'
+
 1.4.1
 - the info pane is made of a fixed size with scrolling;
 - tracker.html 'load' parameter added 
