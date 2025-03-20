@@ -32,7 +32,7 @@ export function loadTracker(mapid, opts = {}) {
             try {
                 noSleep.enable();
             } catch (e) {
-                console.error(e.message);
+                console.error(e.message); // todo: show message
             }    
         }, false);
 }

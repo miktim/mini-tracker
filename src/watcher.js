@@ -1,5 +1,5 @@
 /* 
- * LiteRadar Leaflet tracker, MIT (c) 2019-2024 miktim@mail.ru
+ * LiteRadar Leaflet tracker, MIT (c) 2019-2025 miktim@mail.ru
  * Geolocation watcher
  * See https://w3c.github.io/geolocation-api/#examples
  */
@@ -34,7 +34,7 @@ export var geolocationWatcher = {
                 {
                     timeout: timeout * 1000,
                     enableHighAccuracy: highAccuracy,
-                    maximumAge: 0
+                    maximumAge: timeout * 1000 / 2
                 }
         );
         this.interval = setInterval(function (self) {
