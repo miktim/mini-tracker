@@ -29,7 +29,11 @@ export function loadTracker(mapid, opts = {}) {
 // (must be wrapped in a user input event handler e.g. a mouse or touch handler)
         document.addEventListener('click', function enableNoSleep() {
             document.removeEventListener('click', enableNoSleep, false);
-            noSleep.enable();
+            try {
+                noSleep.enable();
+            } catch (e) {
+                console.error(e.message);
+            }    
         }, false);
 }
 
