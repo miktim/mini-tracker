@@ -58,6 +58,8 @@ function TrackerTitledPane(style = 'tracker-pane', hidden = true) {
     img.src = './images/btn_close.png';
     img.onclick = (function (e) {
         this.hide();
+        map.tracking.stop();
+        map.tracking.remove();
     }).bind(this);
     this.divContent = createDOMElement('div', style, this.pane);
     this.show = function (title, content) {

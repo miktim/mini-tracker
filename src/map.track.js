@@ -47,10 +47,11 @@ export function Track(map, trackLayer) {
     };
 
     this.stop = function () {
+        if(this.marker === null) return;
         this.marker.off('move', this.onMarkerMove);
         this.rubberThread.setLatLngs([]);
         this.marker = null;
-        infoPane.hide();
+//        infoPane.hide();
         logger.log(format(lang.fmtTrkStop, this.name));
     };
 

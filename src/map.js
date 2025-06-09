@@ -1,5 +1,5 @@
 /* 
- * LiteRadar Leaflet mini tracker, MIT (c) 2019-2023 miktim@mail.ru
+ * LiteRadar Leaflet mini tracker, MIT (c) 2019-2025 miktim@mail.ru
  */
 import {logger} from "./logger.js";
 import {extend, toPosition, format} from './util.js';
@@ -18,10 +18,11 @@ function TrackerReadyEvent() {
     return new Event('trackerready');
 }
 
-function fireTrackerReadyEvent() {
+function fireTrackerReadyEvent(realLocation) {
     map.trackerReady = {
         event: 'ready:tracker:' + tracker.version,
-        mapCenter: toPosition(map.getCenter())
+        mapCenter: toPosition(map.getCenter()),
+        realLocation: realLocation
     };
     interfaces.websocket.to(JSON.stringify(map.trackerReady));
     interfaces.webview.to(JSON.stringify(map.trackerReady));
@@ -61,14 +62,14 @@ export function loadMap(mapid = "map") {
     map.tracking = new Track(map, map.trackLayer);
     createControls(map);
 
-    map.locate({setView: true, timeout: options.watch * 1000, watch: false})
+    map.locate({setView: true, timeout: options.watch * 1000 * 2, watch: false})
             .once('locationfound', function (e) {
 //                map.setZoom(options.map.defaultZoom);
-                fireTrackerReadyEvent();
+                fireTrackerReadyEvent(true);
             })
             .once('locationerror', function (e) {
                 logger.error(e);
-                fireTrackerReadyEvent();
+                fireTrackerReadyEvent(false);
             });
 
     return map;
@@ -90,7 +91,7 @@ MapSource.prototype.remove = function () {
     if (this.tracked()) {
         this.outdated();
         return;
-    }    
+    }
     this.marker.removeFrom(map.trackerObjectLayer);
     this.marker.accuracyCircle.removeFrom(map.trackerObjectLayer);
     delete trackerObjects[this.id];
@@ -104,7 +105,7 @@ var __map = {
     setCenterToLocation: function (timeout = options.watch) {
         logger.info(lang.msgLocWaiting, timeout);
 //        var zoom = this.getZoom();
-        this.locate({setView: true, timeout: timeout * 1000, watch: false}) // milliseconds
+        this.locate({setView: true, timeout: timeout * 1000 * 2, watch: false}) // milliseconds
                 .once('locationfound', function (e) {
                     logger.cancel();
                     this.setZoom(options.map.defaultZoom); // restore zoom
@@ -159,6 +160,8 @@ var __map = {
                     .extend(this.tracking.track.getBounds());
             if (bounds.isValid())
                 this.fitBounds(bounds);
+            else
+                logger.info(lang.msgNotFound);
         }
     },
 
@@ -209,11 +212,11 @@ var __map = {
     trackerIcons: [],
     trackerColors: ['darkgray', 'blue', 'green', 'red', 'yellow'],
 
-    getTrackerIcon: function (iconid = 2) {
+    getTrackerIcon: function (iconid = 0) {
         iconid = Math.max(0, Math.min(iconid, this.trackerIcons.length - 1));
         return this.trackerIcons[iconid];
     },
-
+    
     makeTrackerIcon: function (url, isz) {
         isz = isz || 32;
         return L.icon({
@@ -248,6 +251,7 @@ var __map = {
             trackerObjects[src.id] = mapObject;
             logger.log(format(lang.fmtObjCreate, src.name));
         } else {
+            mapObject.name = src.name;
             mapObject.marker.accuracyCircle.setLatLng(srcLatLng);
             mapObject.marker.accuracyCircle.setRadius(Math.min(src.accuracy, 1500));
             mapObject.marker.source = src; // before marker move!

@@ -11,7 +11,7 @@ import * as util from './util.js';
 
 //(function (window, document) {
 export var tracker = new Evented({
-    version: '1.4.3',
+    version: '1.4.4',
     load: function (mapid = 'map', options = {}) {
         loadTracker(mapid, options);
     },
@@ -26,10 +26,10 @@ export var tracker = new Evented({
     },
     whenReady: function (listener) {
         if ('trackerReady' in map) {
-            listener({readyObj: map.trackerReady});
+            listener({eventObj: map.trackerReady});
         } else {
             this.once('trackerready', function (e) {
-                listener({readyObj: map.trackerReady});
+                listener({eventObj: map.trackerReady});
             });
         }
     },

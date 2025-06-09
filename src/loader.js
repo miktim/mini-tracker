@@ -3,6 +3,7 @@
  */
 
 import {geolocationWatcher} from './watcher.js';
+import {logger} from './logger.js';
 import {options} from './options.js';
 import {objectsWatcher} from './objects.js';
 import {webSocket} from './websocket.js';
@@ -32,7 +33,7 @@ export function loadTracker(mapid, opts = {}) {
             try {
                 noSleep.enable();
             } catch (e) {
-                console.error(e.message); // todo: show message
+                logger.error(e.message); // todo: broadcast message
             }    
         }, false);
 }

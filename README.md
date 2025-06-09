@@ -57,7 +57,8 @@ Controls at the screen top right:
 #### 2.2 Tracking  
 
 - Tap the icon of the object to start tracking. Tap the icon again to stop it. The next track deletes the previous one.
-- Tap the node accuracy circle to show node info. Tap the track node info panel (scrolled, contents may vary) to slide it to the left.
+- Tap the node accuracy circle to show node info. Tap the track node info panel (scrolled, contents may vary) to slide it to the left.  
+- Closing the info pane deletes the track.
 - Double-tap on the tracking polyline to copy it to the clipboard in GeoJSON format. Example:  
 ```
 {
@@ -88,9 +89,23 @@ Controls at the screen top right:
 <img
   src="./markdown/track.png"
   alt="Track" height=400 width=240/>  
-Heading (HDG) is the angle in degrees clockwise from true North to the direction from the previous location to the current one.  
-Course (CRS) is the angle in degrees clockwise from true North to direction from the current to the next node.  
-Deviation is the angle between heading and course.  
+
+#### 2.3 Abbreviations  
+  
+|     | Description |
+|-----|------------------------------------|   
+| LAT | WGS-84 latitude in degrees |  
+| LON | WGS-84 longitude in degrees |  
+| ACC | location accuracy in meters |
+| HDGp | is the angle in degrees clockwise from true North to the direction from the previous location (heading) to the current one. | 
+| CRS | course: is the angle in degrees clockwise from true North to direction from the current to the next node. | 
+| S | The path traveled |
+| Vavg | Average speed on the path  |
+| D | The distance between two locations |
+| V | Speed on the distance |  
+  
+Deviation is the angle between HDGp and CRS.  
+  
   
 ### 3. Tracker WebView and WebSocket API  
 
@@ -110,6 +125,25 @@ webView.setWebViewClient(new WebViewClient() {
       function(event) { Android.fromTracker(event); };");
   }
 });
+mWebView.addJavascriptInterface(new FromTracker(this), "Android");
+// ... any code
+mWebView.loadUrl(url);
+// ... any code
+
+public class FromTracker {
+  Context mContext;
+
+  /** Instantiate the interface and set the context. */
+  FromTracker(Context c) {
+    mContext = c;
+  }
+
+  /** get JSON from WebPage and log it */
+  @JavascriptInterface
+  public void fromTracker(String json) {
+    Log.d("From tracker", json);
+  }
+}
 ```  
 See also: https://developer.android.com/develop/ui/views/layout/webapps/webview#UsingJavaScript
 
@@ -163,7 +197,8 @@ When started, the tracker moves the map to the current location (if it is not av
 ```
 {
   "event":"ready:tracker:1.1.0",
-  "mapCenter":[51.47838445,0.0018107648]
+  "mapCenter":[51.47838445,0.0018107648],
+  "realLocation":true
 }
 ```  
 
@@ -179,10 +214,8 @@ Properties:
 | accuracy | Number | required, in meters (radius!) |
 | timestamp | Number | required, EpochTimeStamp in MILLISECONDS |
 | iconid | Number | optional, (0 : 4) gray, blue, green, red, yellow |
-| timeout | Number | optional, location 'lifetime' in SECONDS |
-| speed | Number | optional, meters per second |
-| heading | Number | optional, the angle in degrees clockwise from true North (0 : 360)|
-
+| timeout | Number | optional, location 'lifetime' in SECONDS |  
+  
 #### 3.2 Tracker Message object  
 
 Properties:
@@ -204,6 +237,7 @@ Properties:
 | Name | Type | Description |
 |-------------|------|------------|
 | mapCenter | [Number, Number] | latitude  and longitude of the map center |
+| realLocation | boolean | true, if the current location is defined |
 
 ### 4. Tracker JavaScript API  
 
@@ -215,7 +249,7 @@ Methods:
 | Method | Returns | Description |
 |--------|---------|-------------|
 | load(\<String> id) |  | load tracker given the DOM ID of a \<div> element |
-| whenReady(\<Function> fn) |  | wait for the tracker to load. Event contains readyObj property |
+| whenReady(\<Function> fn) |  | wait for the tracker to load. Event contains eventObj property with ready event object |
 | getMap() | \<Leaflet Map> | |
 | LocationSource({properties}) | \<LocationSource> | see above |
 | Message(\<String> message) | \<Message> | see above |

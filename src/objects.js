@@ -128,7 +128,6 @@ export function SourceListEntry(src, tracked) {
     this.tracked = tracked;
 }
 
-// TODO remove after 10 outdates, getSource
 export var objectsWatcher = {
     interval: null,
 

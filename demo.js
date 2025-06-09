@@ -77,5 +77,5 @@ Tracker.whenReady(function (e) {
         console.log(e);
     });
     window.addEventListener('beforeunload', demo.stop);
-    demo.start(e.readyObj.mapCenter);
+    demo.start(e.eventObj.mapCenter);
 });
