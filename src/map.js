@@ -62,7 +62,10 @@ export function loadMap(mapid = "map") {
     map.tracking = new Track(map, map.trackLayer);
     createControls(map);
 
-    map.locate({setView: true, timeout: options.watch * 1000 * 2, watch: false})
+    map.locate({setView: true,
+        timeout: options.watch * 1000 * 2,
+//        maxZoom: options.map.defaultZoom,
+        watch: false})
             .once('locationfound', function (e) {
 //                map.setZoom(options.map.defaultZoom);
                 fireTrackerReadyEvent(true);
@@ -105,10 +108,14 @@ var __map = {
     setCenterToLocation: function (timeout = options.watch) {
         logger.info(lang.msgLocWaiting, timeout);
 //        var zoom = this.getZoom();
-        this.locate({setView: true, timeout: timeout * 1000 * 2, watch: false}) // milliseconds
+        this.locate({setView: true, 
+            timeout: timeout * 1000,
+            watch: false,
+//            maxZoom: options.map.defaultZoom,
+            enableHighAccuracy: false}) // milliseconds
                 .once('locationfound', function (e) {
                     logger.cancel();
-                    this.setZoom(options.map.defaultZoom); // restore zoom
+//                    this.setZoom(options.map.defaultZoom); // restore zoom
                 })
                 .once('locationerror', function (e) {
                     logger.error(e);

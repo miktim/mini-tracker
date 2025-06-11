@@ -34,7 +34,7 @@ export var geolocationWatcher = {
                 {
                     timeout: timeout * 1000,
                     enableHighAccuracy: highAccuracy,
-                    maximumAge: timeout * 1000 / 2
+                    maximumAge: (timeout * 1000) + 500
                 }
         );
         this.interval = setInterval(function (self) {
