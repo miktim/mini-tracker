@@ -104,7 +104,7 @@ Controls at the screen top right:
 | D | The distance between track nodes |
 | V | Speed on the distance |  
   
-Deviation is the angle between HDGp and CRS.  
+Deviation is the angle between TRK and CRS.  
   
   
 ### 3. Tracker WebView and WebSocket API  
