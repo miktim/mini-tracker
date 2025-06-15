@@ -5,6 +5,8 @@ TODO:
 - do not starts tracking of expired object
 - ?center map to first created object
 
+1.4.5
+- fixed map initialization
 1.4.4
 - closing track info pane deletes the track.
 - updates the name of the source object in the map object

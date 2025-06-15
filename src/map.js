@@ -33,8 +33,14 @@ function fireTrackerReadyEvent(realLocation) {
 export function loadMap(mapid = "map") {
 // Prime Meridian (Greenwich)
     var primeMeridian = [51.477928, -0.001545];
-    map = L.map(mapid, {center: primeMeridian, zoomControl: false,
-        zoom: options.map.defaultZoom, minZoom: options.map.minZoom});
+    map = L.map('map', {
+        center: primeMeridian,
+        doubleClickZoom: false,
+        zoomControl: false,
+        minZoom: options.map.minZoom
+    }).locate({setView: true, maxZoom: options.map.defaultZoom});
+//    map = L.map(mapid, {center: primeMeridian, zoomControl: false,
+//        zoom: options.map.defaultZoom, minZoom: options.map.minZoom});
     L.tileLayer(window.location.protocol + '//{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);

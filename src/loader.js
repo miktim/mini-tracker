@@ -25,7 +25,7 @@ export function loadTracker(mapid, opts = {}) {
         webSocket.start();
     objectsWatcher.start();
 // see: https://github.com/richtr/NoSleep.js
-    if (getMobileOperatingSystem())
+//    if (getMobileOperatingSystem())
 // Enable wake lock.
 // (must be wrapped in a user input event handler e.g. a mouse or touch handler)
         document.addEventListener('click', function enableNoSleep() {

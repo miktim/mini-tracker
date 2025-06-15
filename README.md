@@ -97,11 +97,11 @@ Controls at the screen top right:
 | LAT | WGS-84 latitude in degrees |  
 | LON | WGS-84 longitude in degrees |  
 | ACC | location accuracy in meters |
-| HDGp | is the angle in degrees clockwise from true North to the direction from the previous location (heading) to the current one. | 
+| TRK | track: is the angle in degrees clockwise from true North to the direction from the previous location to the current one. | 
 | CRS | course: is the angle in degrees clockwise from true North to direction from the current to the next node. | 
 | S | The path traveled |
 | Vavg | Average speed on the path  |
-| D | The distance between two locations |
+| D | The distance between track nodes |
 | V | Speed on the distance |  
   
 Deviation is the angle between HDGp and CRS.  
