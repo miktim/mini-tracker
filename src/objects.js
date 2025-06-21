@@ -32,9 +32,9 @@ export function Source(s) {
     this.longitude = undefined; // required, WGS-84 degrees (-180 : 180)
     this.accuracy = undefined; // required, meters (0:..., radius)
     this.speed = 0; // meters per second (0:...)
-    this.heading = 0; // degrees (0:360) counting clockwise from true North (GNSS)
+    this.track = 0; // degrees (0:360) counting clockwise from true North (GNSS)
     this.timestamp = Date.now(); // acquired time in milliseconds (EpochTimeStamp)
-    this.timeout = options.watch; // seconds (0:...) location lifetime
+    this.timeout = options.watch * 2; // seconds (0:...) location lifetime
     this.interface = ''; // interface name: 'websocket', 'webview', 'javascript'
     update(this, s);
 }
@@ -73,19 +73,19 @@ export function checkSource(src) {
         throw new TrackerError(3, src);
     }
     src.name = src.name || 'unknown';
-    src.timeout = src.timeout || options.outdatingDelay;
+    src.timeout = src.timeout || options.watch * 2;
     src.speed = src.speed || 0;
-    src.heading = src.heading || 0;
+    src.track = src.track || 0;  // track!!
     src.iconid = (src.iconid && src.iconid.between(0,4)) ? src.iconid : 0;
     let prevSrc = trackerObjects[src.id]; // map depended
     if (prevSrc) {
         prevSrc = prevSrc.getSource();
         if (src.timestamp <= prevSrc.timestamp)
             throw new TrackerError(4, src); // outdated location
-// calc heading, speed 
+// calc track, speed 
         let pos = [src.latitude, src.longitude];
         let prevPos = [prevSrc.latitude, prevSrc.longitude];
-        src.heading = geoUtil.heading(prevPos, pos);
+        src.track = geoUtil.heading(prevPos, pos);
         src.speed = geoUtil.distance(prevPos, pos) /
                 ((src.timestamp - prevSrc.timestamp) / 1000);
     }
@@ -104,6 +104,11 @@ export function Evented(extension = {}) {
     evented.off = function (event, listener) {
         this.removeEventListener(event, listener);
         return this;
+    };
+    this.fireEvent = function(eventname) {
+        var event = new Event(eventname);
+        event.eventObj = this;
+        this.dispatchEvent(event);
     };
     return extend(evented, extension);
 }

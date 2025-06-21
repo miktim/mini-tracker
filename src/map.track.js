@@ -34,11 +34,12 @@ export function Track(map, trackLayer) {
         var latLng = marker.getLatLng();
         this.rubberThread.setLatLngs([latLng, latLng]).addTo(this.layer);
 //        this.color = map.trackerColors[marker.source.iconid];
+        this.id = marker.source.id;
         this.name = marker.source.name;
         this.track.addTo(this.layer);//.setStyle({color: this.color});
 //        this.track.bindTooltip(lang.msgTrack + this.name, {className: 'tracker-tooltip'});
         this.lastLatLng = latLng;
-        this.lastHeading = marker.source.heading || 0;
+        this.lastHeading = marker.source.track || 0;
         this.nodes = [];
         this.addTrackNode(marker.source, 0).fire('click');
         this.marker = marker;
@@ -47,7 +48,8 @@ export function Track(map, trackLayer) {
     };
 
     this.stop = function () {
-        if(this.marker === null) return;
+        if (this.marker === null)
+            return;
         this.marker.off('move', this.onMarkerMove);
         this.rubberThread.setLatLngs([]);
         this.marker = null;
@@ -67,7 +69,7 @@ export function Track(map, trackLayer) {
             this.rubberThread.setLatLngs([this.lastLatLng, newLatLng]);
             var dist = distance(this.lastLatLng, newLatLng);
             var step = Math.max(options.track.minDistance, this.marker.source.accuracy);
-            var hdng = heading(this.lastLatLng, newLatLng);
+            var hdng = heading(this.lastLatLng, newLatLng); // confusion heading/track
 //console.log(this.marker.source.heading.toFixed(2), hdng, dist);
             if ((dist > step
                     && Math.abs(this.lastHeading - hdng) > options.track.deviation)
@@ -111,6 +113,7 @@ export function Track(map, trackLayer) {
 // Track GeoJSON to clipboard
     this.track.on('dblclick', function (e) {
         var geoJson = this.track.toGeoJSON(6);
+        geoJson.properties.id = this.id;
         geoJson.properties.name = this.name;
         geoJson.properties.nodes = {};
         geoJson.properties.nodes.accuracy = [];
@@ -134,7 +137,7 @@ export function Track(map, trackLayer) {
 //            index: index,
             totalTime: totalTime,
 //            path: node.info.path,
-            speedAvg: (index === 0 ? null : node.info.path / (totalTime/1000) ),
+            speedAvg: (index === 0 ? null : node.info.path / (totalTime / 1000)),
             speed: (index === 0 ? null :
                     (node.info.distance /
                             ((node.info.timestamp - this.nodes[index - 1].info.timestamp) / 1000))),
@@ -147,7 +150,7 @@ export function Track(map, trackLayer) {
         };
         return nodeEntry;
     };
-    
+
     this.showNodeInfo = function (node) {
         let entry = this.getNodeEntry(node);
         let table = new TrackerDOMTable({rowClasses: ['', 'tracker-cell-wide']});
@@ -157,11 +160,17 @@ export function Track(map, trackLayer) {
         table.addRow([lang.dict.tme, formatTime(entry.totalTime)]);
         table.addRow([lang.dict.pth, (node.info.path / 1000).toFixed(3)]);
         table.addRow([lang.dict.spa, (entry.speedAvg * 3.6).toFixed(0)]);
-        table.addRow([lang.dict.dis, (node.info.distance/1000).toFixed(3)]);
-        table.addRow([lang.dict.spd, (entry.speed * 3.6).toFixed(0)]);
-        table.addRow([lang.dict.hdg, entry.heading ? entry.heading.toFixed(1) : '-']);
+        table.addRow([lang.dict.dis, (node.info.distance / 1000).toFixed(3)]);
+        table.addRow([lang.dict.spd, (entry.speed * 3.6).toFixed(1)]);
+        table.addRow([lang.dict.trk, entry.heading ? entry.heading.toFixed(1) : '-']);
         table.addRow([lang.dict.crs, entry.course ? entry.course.toFixed(1) : '-']);
+        table.addRow([lang.dict.acc, node.getRadius().toFixed(0)]);
         infoPane.show(lang.msgTrack + this.name, table.tableNode);
+        infoPane.onClose(function(e) {
+            map.tracking.stop();
+            map.tracking.remove();
+        });
+
     }.bind(this);
 
 }

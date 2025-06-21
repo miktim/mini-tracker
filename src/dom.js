@@ -57,9 +57,7 @@ function TrackerTitledPane(style = 'tracker-pane', hidden = true) {
     var img = createDOMElement('img', 'tracker-title', div);
     img.src = './images/btn_close.png';
     img.onclick = (function (e) {
-        this.hide();
-        map.tracking.stop();
-        map.tracking.remove();
+        this.close();
     }).bind(this);
     this.divContent = createDOMElement('div', style, this.pane);
     this.show = function (title, content) {
@@ -70,6 +68,15 @@ function TrackerTitledPane(style = 'tracker-pane', hidden = true) {
     };
     this.hide = function () {
         this.pane.hidden = true;
+    };
+    this.closeHandler = null;
+    this.close = function() {
+      if(this.closeHandler) this.closeHandler(this);
+      this.closeHandler = null;
+      this.hide();
+    };
+    this.onClose = function(handler) {
+        this.closeHandler = handler;
     };
 }
 

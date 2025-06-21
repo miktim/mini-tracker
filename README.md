@@ -1,4 +1,4 @@
-## Leaflet/OSM based GNSS mini tracker, MIT (c) 2019-2024 @miktim
+## Leaflet/OSM based GNSS mini tracker, MIT (c) 2019-2025 @miktim
 
 The tracker is designed for mobile browsers to visualize tracked objects or your own location. Interaction with the tracker is carried out through the user interface or by exchanging messages in JSON format via WebView, WebSocket or using the JavaScript API.  
 
@@ -39,14 +39,14 @@ Run demo (the wonderful ideal world):
 Track your own location:
   https://miktim.github.io/mini-tracker/?mode=watch&watch=5  
   
-  ### 2 Mini tracker user interface
-  #### 2.1 Objects and controls
+### 2 Mini tracker user interface  
+#### 2.1 Objects and controls  
   
 <img
   src="./markdown/search.png"
   alt="Search" height=400 width=240/>  
 
-The objects are represented by an icon and a circle with a radius equal to the accuracy of the coordinates. Objects with an expired timeout dim.
+The objects are represented by an icon and a circle with a radius equal to the accuracy of the coordinates. Objects whose timeout has expired turn pale, and then they are deleted.
   
 Controls at the screen top right:
 - field to search objects by name. You can use wildcards in the file search style: ? - any single character, * - any characters. Tap the name in the list to locate the object. 
@@ -56,6 +56,10 @@ Controls at the screen top right:
 
 #### 2.2 Tracking  
 
+<img
+  src="./markdown/track.png"
+  alt="Track" height=400 width=240/>  
+
 - Tap the icon of the object to start tracking. Tap the icon again to stop it. The next track deletes the previous one.
 - Tap the node accuracy circle to show node info. Tap the track node info panel (scrolled, contents may vary) to slide it to the left.  
 - Closing the info pane deletes the track.
@@ -64,6 +68,7 @@ Controls at the screen top right:
 {
   "type":"Feature",
   "properties": {
+    "id":"id Demo26"
     "name":"Demo26",
     "nodes": {
       "accuracy": [
@@ -86,22 +91,18 @@ Controls at the screen top right:
 }
 ```  
 
-<img
-  src="./markdown/track.png"
-  alt="Track" height=400 width=240/>  
-
 #### 2.3 Abbreviations  
   
 |     | Description |
 |-----|------------------------------------|   
 | LAT | WGS-84 latitude in degrees |  
 | LON | WGS-84 longitude in degrees |  
-| ACC | location accuracy in meters |
-| TRK | track: is the angle in degrees clockwise from true North to the direction from the previous location to the current one. | 
+| ACC | location accuracy in meters (radius) |
+| TRK | track: is the angle in degrees clockwise from true North to the direction from the previous location (node) to the current one. | 
 | CRS | course: is the angle in degrees clockwise from true North to direction from the current to the next node. | 
 | S | The path traveled |
 | Vavg | Average speed on the path  |
-| D | The distance between track nodes |
+| D | The distance from previous track node |
 | V | Speed on the distance |  
   
 Deviation is the angle between TRK and CRS.  
@@ -113,23 +114,29 @@ The tracker communicates with the opposite side (let's call it the "client") via
 - client loads the tracker.html with requred parameters and establishes a connection;  
 - client sends a requests (Actions) in UTF-8 JSON format and receives a responses (Events) in UTF-8 JSON format.  
 
+#### 3.1 WebView API  
+
 For WebView clients, there are two entry points:  
 - Tracker.webview.toTracker(String actionJson);
 - Tracker.webview.fromTracker(String eventJson).  
 
 To access tracker events from the Android app, redefine the fromTracker function. For example:  
 ```
+/** Redefine function **/
 webView.setWebViewClient(new WebViewClient() {
   public void onPageFinished(WebView view, String url) {
     view.loadUrl("javascript: Tracker.webview.fromTracker = 
       function(event) { Android.fromTracker(event); };");
   }
 });
+/** Bind interface class **/
 mWebView.addJavascriptInterface(new FromTracker(this), "Android");
 // ... any code
 mWebView.loadUrl(url);
 // ... any code
-
+```  
+Interface class example:
+```
 public class FromTracker {
   Context mContext;
 
@@ -138,7 +145,7 @@ public class FromTracker {
     mContext = c;
   }
 
-  /** get JSON from WebPage and log it */
+  /** Get JSON from WebPage and log it */
   @JavascriptInterface
   public void fromTracker(String json) {
     Log.d("From tracker", json);
@@ -146,8 +153,12 @@ public class FromTracker {
 }
 ```  
 See also: https://developer.android.com/develop/ui/views/layout/webapps/webview#UsingJavaScript
-
+  
+#### 3.2 WebSocket API  
+  
 The tracker connects to the WebSocket URI using the "tracker.literadar.org" subprotocol.  
+  
+#### 3.3 Actions and Events
 
 Tracker supports two actions:  
 - update location source to show object on the map;
@@ -243,7 +254,7 @@ Properties:
 
 #### 4.1 Global object Tracker  
 
-**version** constant contains current Tracker version as "1.1.0"
+**version** constant contains current Tracker version as "1.2.3"
 
 Methods:
 | Method | Returns | Description |

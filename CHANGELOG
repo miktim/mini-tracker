@@ -1,10 +1,13 @@
 TODO:
-- location problems (watch, center map)
+- improved location detection (watch, center map)
 - Android: I/VideoCapabilities: Unsupported profile 4 for video/mp4v-es (NoSleep.min.js) Back to NoSleep.old?
 - show track nodes as list
-- do not starts tracking of expired object
+- ?do not starts tracking of expired object
 - ?center map to first created object
 
+1.4.6
+- fixed close pane method
+- fixed center map to location (location handler)
 1.4.5
 - fixed map initialization
 1.4.4

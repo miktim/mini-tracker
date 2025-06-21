@@ -33,14 +33,14 @@ function fireTrackerReadyEvent(realLocation) {
 export function loadMap(mapid = "map") {
 // Prime Meridian (Greenwich)
     var primeMeridian = [51.477928, -0.001545];
-/*
-    map = L.map('map', {
-        center: primeMeridian,
-        doubleClickZoom: false,
-        zoomControl: false,
-        minZoom: options.map.minZoom
-    }).locate({setView: true, maxZoom: options.map.defaultZoom});
- */
+    /*
+     map = L.map('map', {
+     center: primeMeridian,
+     doubleClickZoom: false,
+     zoomControl: false,
+     minZoom: options.map.minZoom
+     }).locate({setView: true, maxZoom: options.map.defaultZoom});
+     */
     map = L.map(mapid, {center: primeMeridian, zoomControl: false,
         zoom: options.map.defaultZoom, minZoom: options.map.minZoom});
     L.tileLayer(window.location.protocol + '//{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -74,13 +74,14 @@ export function loadMap(mapid = "map") {
         timeout: options.watch * 1000 * 2,
 //        maxZoom: options.map.defaultZoom,
         watch: false})
-            .once('locationfound', function (e) {
+            .once('locationfound locationerror', function (e) {
+                if (e.type === 'locationfound') {
 //                map.setZoom(options.map.defaultZoom);
-                fireTrackerReadyEvent(true);
-            })
-            .once('locationerror', function (e) {
-                logger.error(e);
-                fireTrackerReadyEvent(false);
+                    fireTrackerReadyEvent(true);
+                } else {
+                    logger.error(e);
+                    fireTrackerReadyEvent(false);
+                }
             });
 
     return map;
@@ -116,17 +117,18 @@ var __map = {
     setCenterToLocation: function (timeout = options.watch) {
         logger.info(lang.msgLocWaiting, timeout);
 //        var zoom = this.getZoom();
-        this.locate({setView: true, 
-            timeout: timeout * 1000,
+        this.locate({setView: true,
+            timeout: timeout * 1000,  // to milliseconds
             watch: false,
 //            maxZoom: options.map.defaultZoom,
-            enableHighAccuracy: false}) // milliseconds
-                .once('locationfound', function (e) {
-                    logger.cancel();
+            enableHighAccuracy: false})
+                .once('locationfound locationerror', function (e) {
+                    if (e.type === 'locationfound') {
+                        logger.cancel();
 //                    this.setZoom(options.map.defaultZoom); // restore zoom
-                })
-                .once('locationerror', function (e) {
-                    logger.error(e);
+                    } else {
+                        logger.error(e);
+                    }
                 });
     },
 
@@ -196,12 +198,13 @@ var __map = {
             if (e.target.tagName.toLowerCase() === 'td') {
                 var objid = e.target.parentNode.lastChild.innerHTML;
                 this.locateTrackerObject(objid);
-                listPane.pane.hidden = true;
+//                listPane.pane.hidden = true;
+                listPane.close();
             }
         }.bind(this);
 
         let d = lang.dict;
-        table.addHeader(['', d.nme, d.lat, d.lng, d.acc, d.hdg, d.spd, d.tms]);
+        table.addHeader(['', d.nme, d.lat, d.lng, d.acc, d.trk, d.spd, d.tms]);
         let cn = 'tracker-cell-number';
         table.tableInfo.rowClasses = [
             cn, '', cn, cn, cn, cn, cn, '', 'tracker-invisible'
@@ -215,7 +218,7 @@ var __map = {
                 src.getPosition()[0].toFixed(7), // latitude
                 src.getPosition()[1].toFixed(7), // longitude
                 src.accuracy.toFixed(1),
-                src.heading ? src.heading.toFixed(1) : '-',
+                src.track ? src.track.toFixed(1) : '-',
                 src.speed ? (src.speed * 3.6).toFixed(0) : '-', // km/h
                 (new Date(src.timestamp)).toLocaleString(), // TODO? swap date/time
                 src.id]);
@@ -231,7 +234,7 @@ var __map = {
         iconid = Math.max(0, Math.min(iconid, this.trackerIcons.length - 1));
         return this.trackerIcons[iconid];
     },
-    
+
     makeTrackerIcon: function (url, isz) {
         isz = isz || 32;
         return L.icon({
