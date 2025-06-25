@@ -19,7 +19,8 @@
         </div>
         <script type="text/javascript">
             {
-                var appendBodyScript = function (src, type = "text/javascript") {
+                var appendBodyScript = function (src, type) {
+                    type = type || "text/javascript";
                     var script = document.createElement("script");
                     script.type = type;
                     script.src = src;
@@ -29,7 +30,8 @@
                 };
 
 // https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-                var getUrlSearchParameter = function (name, url = window.location.href) {
+                var getUrlSearchParameter = function (name, url) {
+                    url = url || window.location.href;
                     name = name.replace(/[\[\]]/g, '\\$&');
                     var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
                             results = regex.exec(url);
@@ -53,7 +55,7 @@
                 if (trackerMode('demo'))
                     appendBodyScript('./demo.js');
 
-                let userjs = getUrlSearchParameter('load');
+                var userjs = getUrlSearchParameter('load');
                 if (userjs)
                     appendBodyScript(userjs);
             }

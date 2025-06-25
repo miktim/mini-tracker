@@ -9,10 +9,10 @@ import {map} from './map.js';
 import * as geoUtil from './geoUtil.js';
 import * as util from './util.js';
 
-//(function (window, document) {
 export var tracker = new Evented({
-    version: '1.4.6',
-    load: function (mapid = 'map', options = {}) {
+    version: '1.4.7',
+    load: function (mapid, options) {
+        mapid = mapid || 'map'; options = options || {};
         loadTracker(mapid, options);
     },
     SourceLocation: function (src) {
@@ -43,5 +43,3 @@ export var tracker = new Evented({
 });
 
 window.Tracker = tracker;
-
-//}(window, document));

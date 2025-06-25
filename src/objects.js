@@ -14,7 +14,8 @@ Number.prototype.between = function (min, max) {
     return this >= min && this <= max;
 };
 
-export function TrackerError(code = 0, object) {
+export function TrackerError(code, object) {
+    code = code || 0;
     this.code = code;
     this.message = lang.trackererror[code];
     this.type = 'trackererror';
@@ -76,22 +77,22 @@ export function checkSource(src) {
     src.timeout = src.timeout || options.watch * 2;
     src.speed = src.speed || 0;
     src.track = src.track || 0;  // track!!
-    src.iconid = (src.iconid && src.iconid.between(0,4)) ? src.iconid : 0;
-    let prevSrc = trackerObjects[src.id]; // map depended
+    var prevSrc = trackerObjects[src.id]; // map depended
     if (prevSrc) {
         prevSrc = prevSrc.getSource();
         if (src.timestamp <= prevSrc.timestamp)
             throw new TrackerError(4, src); // outdated location
 // calc track, speed 
-        let pos = [src.latitude, src.longitude];
-        let prevPos = [prevSrc.latitude, prevSrc.longitude];
+        var pos = [src.latitude, src.longitude];
+        var prevPos = [prevSrc.latitude, prevSrc.longitude];
         src.track = geoUtil.heading(prevPos, pos);
         src.speed = geoUtil.distance(prevPos, pos) /
                 ((src.timestamp - prevSrc.timestamp) / 1000);
     }
 }
 
-export function Evented(extension = {}) {
+export function Evented(extension) {
+    extension = extension || {};
     var evented = new EventTarget();
     evented.on = function (event, listener) {
         this.addEventListener(event, listener);

@@ -15,7 +15,9 @@ export var geolocationWatcher = {
     timeout: 0,
     lastSource: null,
 
-    start(timeout = options.watch, highAccuracy = true) {
+    start(timeout, highAccuracy) {
+        timeout = timeout || options.watch;
+        highAccuracy = highAccuracy || true;
         this.timeout = timeout;
         if (!('geolocation' in navigator)) {
             logger.error({

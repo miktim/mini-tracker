@@ -22,7 +22,8 @@ export var logger = {
     },
     timer: null,
     pane: loggerPane.pane,
-    update: function (msg, timeout = options.logger.messageDelay) {
+    update: function (msg, timeout) {
+        timeout = timeout || options.logger.messageDelay;
         this.cancel();
         this.pane.innerHTML = msg;
         this.pane.hidden = false;

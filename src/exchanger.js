@@ -95,7 +95,7 @@ var actions = {
 };
 
 var TrackerActionEvent = function (actionObj) {
-    let event = new Event('trackeraction');
+    var event = new Event('trackeraction');
     event.actionObj = actionObj;
     return event;
 };

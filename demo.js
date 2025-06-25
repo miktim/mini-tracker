@@ -7,7 +7,8 @@ var demo = {
     interval: null,
     demos: [],
 // timeout in seconds!
-    start: function (position = [51.505, - 0.09], timeout, demos) { //
+    start: function (position, timeout, demos) { //
+        position = position || [51.505, - 0.09];
         Tracker.SourceLocation().update(); // test trackererror event
         timeout = timeout || 3;
         demos = demos || 30;
