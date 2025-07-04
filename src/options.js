@@ -24,7 +24,8 @@ export var options = {
     },
     lang: 'en_US',
 
-    update: function (opts = {}) {
+    update: function (opts) {
+        opts = opts || {}; 
         update(this, opts);
         lang.set();
     },

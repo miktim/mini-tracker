@@ -1,4 +1,5 @@
 #!/bin/bash
 
 # Build ../tracker.js
-webpack
+#webpack
+npx webpack

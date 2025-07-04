@@ -91,7 +91,8 @@ export function isTouchDevice() {
 }
 
 // https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-export function getUrlSearchParameter(name, url = window.location.href) {
+export function getUrlSearchParameter(name, url) {
+     url = url || window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');
     var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
             results = regex.exec(url);

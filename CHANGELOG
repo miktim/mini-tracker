@@ -4,7 +4,12 @@ TODO:
 - show track nodes as list
 - ?do not starts tracking of expired object
 - ?center map to first created object
-
+1.4.8
+- fixed stop/delete track methods for track copying
+1.4.7
+- added 'track to clipboard' button;
+- map.icon object added (methods add, get);
+- the color of the acccuracy circle and track depends on the icon
 1.4.6
 - fixed close pane method
 - fixed center map to location (location handler)

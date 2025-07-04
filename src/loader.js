@@ -12,8 +12,8 @@ import {map, loadMap} from './map.js';
 
 var activities = [];
 
-export function loadTracker(mapid, opts = {}) {
-    options.update(opts);
+export function loadTracker(mapid, opts) {
+    options.update(opts || {});
     loadMap(mapid);
     var noSleep = new NoSleep();
     noSleep.stop = noSleep.disable;

@@ -33,16 +33,16 @@ export function Track(map, trackLayer) {
         this.remove();
         var latLng = marker.getLatLng();
         this.rubberThread.setLatLngs([latLng, latLng]).addTo(this.layer);
-//        this.color = map.trackerColors[marker.source.iconid];
+
         this.id = marker.source.id;
         this.name = marker.source.name;
-        this.track.addTo(this.layer);//.setStyle({color: this.color});
+        this.track.setStyle({color: marker.options.icon.options.color}).addTo(this.layer);//;
 //        this.track.bindTooltip(lang.msgTrack + this.name, {className: 'tracker-tooltip'});
         this.lastLatLng = latLng;
         this.lastHeading = marker.source.track || 0;
         this.nodes = [];
-        this.addTrackNode(marker.source, 0).fire('click');
         this.marker = marker;
+        this.addTrackNode(marker.source, 0).fire('click');
         this.marker.on('move', this.onMarkerMove);
         logger.log(format(lang.fmtTrkStart, this.name));
     };
@@ -53,11 +53,11 @@ export function Track(map, trackLayer) {
         this.marker.off('move', this.onMarkerMove);
         this.rubberThread.setLatLngs([]);
         this.marker = null;
-//        infoPane.hide();
         logger.log(format(lang.fmtTrkStop, this.name));
     };
 
     this.remove = function () {
+        this.nodes = [];
         this.track.setLatLngs([]);//.unbindTooltip();
         this.layer.clearLayers();
     };
@@ -89,7 +89,7 @@ export function Track(map, trackLayer) {
         this.lastLatLng = source.getLatLng();
         this.track.addLatLng(this.lastLatLng).bringToFront();
         var node = L.circle(
-                this.lastLatLng, source.accuracy, {weight: 1, color: 'blue'})
+                this.lastLatLng, source.accuracy, {weight: 1, color: this.marker.options.icon.options.color})
                 .addTo(this.layer);
         node.info = this.TrackNodeInfo(
                 this.nodes.length, source.timestamp, distance);
@@ -111,7 +111,8 @@ export function Track(map, trackLayer) {
     };
 
 // Track GeoJSON to clipboard
-    this.track.on('dblclick', function (e) {
+    this.copyToClipboard = function() {
+        if(this.nodes.length === 0) return;
         var geoJson = this.track.toGeoJSON(6);
         geoJson.properties.id = this.id;
         geoJson.properties.name = this.name;
@@ -124,6 +125,9 @@ export function Track(map, trackLayer) {
         }
         navigator.clipboard.writeText(JSON.stringify(geoJson));
         logger.log(lang.msgGeoJSON);
+    };
+    this.track.on('dblclick', function (e) {
+        this.copyToClipboard();
     }.bind(this));
 
     this.onNodeClick = (function (e) {
@@ -131,8 +135,8 @@ export function Track(map, trackLayer) {
     }).bind(this);
 
     this.getNodeEntry = function (node) {
-        let index = node.info.i;
-        let totalTime = (node.info.timestamp - this.nodes[0].info.timestamp);
+        var index = node.info.i;
+        var totalTime = (node.info.timestamp - this.nodes[0].info.timestamp);
         var nodeEntry = {
 //            index: index,
             totalTime: totalTime,
@@ -152,8 +156,8 @@ export function Track(map, trackLayer) {
     };
 
     this.showNodeInfo = function (node) {
-        let entry = this.getNodeEntry(node);
-        let table = new TrackerDOMTable({rowClasses: ['', 'tracker-cell-wide']});
+        var entry = this.getNodeEntry(node);
+        var table = new TrackerDOMTable({rowClasses: ['', 'tracker-cell-wide']});
 //*        table.tableNode.style.maxWidth = '200px';
         table.addRow([lang.dict.nde, (node.info.i + 1)]);
 //                .style.backgroundColor = 'rgb(96,96,96)';

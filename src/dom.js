@@ -16,7 +16,8 @@ export function createDOMElement(tagName, className, container) {
     return el;
 }
 
-function addDOMTableRow(rowData = [], rowClasses = [], tableEl, tag = 'td') {
+function addDOMTableRow(rowData, rowClasses, tableEl, tag) {
+    rowData = rowData || []; rowClasses = rowClasses || []; tag = tag || 'td';
     var rowEl = createDOMElement('tr', 'tracker-table', tableEl);
     for (var coli = 0; coli < rowData.length; coli++) {
         var className = rowClasses[coli] ? rowClasses[coli] : 'tracker-table';
@@ -25,13 +26,16 @@ function addDOMTableRow(rowData = [], rowClasses = [], tableEl, tag = 'td') {
     return rowEl;
 }
 
-export function TrackerDOMTable(tableInfo = {}, container) {
+export function TrackerDOMTable(tableInfo, container) {
+    tableInfo = tableInfo || {};
     this.tableNode = createDOMElement('table', 'tracker-table', container);
     this.tableInfo = tableInfo;
-    this.addRow = function (rowData, rowCls = this.tableInfo.rowClasses) {
+    this.addRow = function (rowData, rowCls) {
+        rowCls = rowCls || this.tableInfo.rowClasses;
         return addDOMTableRow(rowData, rowCls, this.tableNode, 'td');
     };
-    this.addHeader = function (rowData, rowCls = this.tableInfo.headerClasses) {
+    this.addHeader = function (rowData, rowCls) {
+        rowCls = rowCls || this.tableInfo.rowClasses;
         return addDOMTableRow(rowData, rowCls, this.tableNode, 'th');
     };
     if ('header' in tableInfo) {
@@ -44,12 +48,16 @@ export function TrackerDOMTable(tableInfo = {}, container) {
 }
 }
 
-function TrackerPane(style = 'tracker-pane', hidden = false) {
+function TrackerPane(style, hidden) {
+    style = style || 'tracker-pane';
+    hidden = hidden || false;
     this.pane = createDOMElement('div', style);
     this.pane.hidden = hidden;
 }
 
-function TrackerTitledPane(style = 'tracker-pane', hidden = true) {
+function TrackerTitledPane(style, hidden) {
+    style = style || 'tracker-pane';
+    hidden = hidden || true;
     this.pane = createDOMElement('div', 'tracker-pane');
     this.pane.hidden = hidden;
     var div = createDOMElement('div', 'tracker-title', this.pane);
@@ -86,16 +94,19 @@ export var createMainMenu = function () {
     var pane = mainMenu.pane;
 
     var menuItems = [
-        {img: './images/btn_locate.png', title: lang.actionSetCenter, onclick: function () {
+        {img: './images/btn_locate.png', title: lang.btnSetCenter, onclick: function () {
                 map.setCenterToLocation();
             }},
-        {img: './images/btn_bound.png', title: lang.actionShowAll, onclick: function () {
+        {img: './images/btn_bound.png', title: lang.btnShowAll, onclick: function () {
                 map.fitAllObjects();
             }},
-        {img: './images/btn_history.png', title: lang.actionHistory, onclick: function () {
+        {img: './images/btn_history.png', title: lang.btnHistory, onclick: function () {
                 logger.showHistory();
-            }}
-
+            }},
+        {img: './images/btn_track.png', title: lang.btnCopyTrack, onclick: function() {
+                map.tracking.copyToClipboard(); 
+        }} 
+        
     ];
 
     for (var item of menuItems) {

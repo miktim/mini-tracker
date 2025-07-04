@@ -2,7 +2,7 @@
  * LiteRadar Leaflet mini tracker, MIT (c) 2019-2025 miktim@mail.ru
  */
 import {logger} from "./logger.js";
-import {extend, toPosition, format} from './util.js';
+import {extend, update, toPosition, format} from './util.js';
 import {options} from './options.js';
 import {lang} from './messages.js';
 import {listPane, TrackerDOMTable} from './dom.js';
@@ -30,7 +30,8 @@ function fireTrackerReadyEvent(realLocation) {
     tracker.dispatchEvent(new TrackerReadyEvent());
 }
 
-export function loadMap(mapid = "map") {
+export function loadMap(mapid) {
+    mapid = mapid || 'map';
 // Prime Meridian (Greenwich)
     var primeMeridian = [51.477928, -0.001545];
     /*
@@ -56,14 +57,11 @@ export function loadMap(mapid = "map") {
 
     extend(map, __map);
 
-    map.trackerIcons = [
-// gray, blue, green, red, yellow
-        map.makeTrackerIcon("./images/phone_0.png"),
-        map.makeTrackerIcon("./images/phone_b.png"),
-        map.makeTrackerIcon("./images/phone_g.png"),
-        map.makeTrackerIcon("./images/phone_r.png"),
-        map.makeTrackerIcon("./images/phone_y.png")
-    ];
+    map.icon.add({url:'./images/phone_0.png', color:'#2F4F4F', anchor:'bottom'});
+    map.icon.add({url:'./images/phone_b.png', color:'blue', anchor:'bottom'});
+    map.icon.add({url:'./images/phone_g.png', color:'green', anchor:'bottom'});
+    map.icon.add({url:'./images/phone_r.png', color:'brown', anchor:'bottom'});
+    map.icon.add({url:'./images/phone_y.png', color:'yellow', anchor:'bottom'});
 
     map.trackerObjectLayer = L.featureGroup().addTo(map); // sources: marker/accuracy
     map.trackLayer = L.layerGroup().addTo(map); // track: polyline/accuracies
@@ -114,11 +112,41 @@ MapSource.prototype.tracked = function () {
 };
 
 var __map = {
-    setCenterToLocation: function (timeout = options.watch) {
+
+    icon: {
+        icons: [],
+        get: function(iconid) {
+        var icon = this.icons[iconid];
+        return (icon === undefined || icon === null) ? this.icons[0] : icon;
+        },
+        add: function(options) {
+            options = update({url:undefined, size: [32, 32], color: 'brown', anchor: 'center'}, options || {});
+            if(typeof options.size === 'number') options.size = [options.size,options.size];
+            var anchor = [options.size[0]/2, options.size[1]]; // bottom
+            if(options.anchor === 'center') anchor[1] = options.size[1]/2;
+            else if (options.anchor === 'top') anchor[1] = 0;
+            var icon = options.url ?
+                    L.icon({
+                        iconSize: options.size,
+                        iconAnchor: anchor,
+                        iconUrl: options.url
+                    }) :
+                    L.divIcon({
+                        iconSize: options.size,
+                        iconAnchor: anchor
+                    });
+            icon.options.color = options.color;
+            this.icons[this.icons.length] = icon;
+            return this.icons.length - 1;
+        }
+    },
+
+    setCenterToLocation: function (timeout) {
+        timeout = timeout || options.watch;
         logger.info(lang.msgLocWaiting, timeout);
 //        var zoom = this.getZoom();
         this.locate({setView: true,
-            timeout: timeout * 1000,  // to milliseconds
+            timeout: timeout * 1000, // to milliseconds
             watch: false,
 //            maxZoom: options.map.defaultZoom,
             enableHighAccuracy: false})
@@ -203,9 +231,9 @@ var __map = {
             }
         }.bind(this);
 
-        let d = lang.dict;
+        var d = lang.dict;
         table.addHeader(['', d.nme, d.lat, d.lng, d.acc, d.trk, d.spd, d.tms]);
-        let cn = 'tracker-cell-number';
+        var cn = 'tracker-cell-number';
         table.tableInfo.rowClasses = [
             cn, '', cn, cn, cn, cn, cn, '', 'tracker-invisible'
         ];
@@ -227,27 +255,11 @@ var __map = {
         logger.info(lang.msgTapToLocate);
     },
 
-    trackerIcons: [],
-    trackerColors: ['darkgray', 'blue', 'green', 'red', 'yellow'],
-
-    getTrackerIcon: function (iconid = 0) {
-        iconid = Math.max(0, Math.min(iconid, this.trackerIcons.length - 1));
-        return this.trackerIcons[iconid];
-    },
-
-    makeTrackerIcon: function (url, isz) {
-        isz = isz || 32;
-        return L.icon({
-            iconSize: [isz, isz],
-            iconAnchor: [isz / 2, isz],
-            iconUrl: url
-        });
-    },
-
     tracking: null,
 
     onSourceUpdate: function (src) { // src = action: "source:update"
-        var icon = this.getTrackerIcon(src.iconid);
+//        var icon = this.getTrackerIcon(src.iconid);
+        var icon = this.icon.get(src.iconid);
         var mapObject = trackerObjects[src.id];
         var srcLatLng = src.getLatLng();
         if (!mapObject) {
@@ -265,7 +277,8 @@ var __map = {
             }).bind(this);
             mapObject.marker.on('click', onMarkerClick);
             mapObject.marker.accuracyCircle = L.circle(srcLatLng, Math.min(src.accuracy, 1500),
-                    {weight: 1, color: 'blue'}).addTo(this.trackerObjectLayer);
+//                    {weight: 1, color: 'blue'}).addTo(this.trackerObjectLayer);
+                    {weight: 1, color: icon.options.color}).addTo(this.trackerObjectLayer);
             trackerObjects[src.id] = mapObject;
             logger.log(format(lang.fmtObjCreate, src.name));
         } else {

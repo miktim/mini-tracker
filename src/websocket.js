@@ -11,7 +11,8 @@ export var webSocket = {
     subprotocol: 'tracker.literadar.org',
     websocket: null,
     error: null,
-    start(host = options.websocket) {
+    start(host) {
+        host = host || options.websocket;
         if (host && !this.websocket) {
             try {
                 var wsurl = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') +
