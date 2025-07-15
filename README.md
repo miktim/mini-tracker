@@ -50,6 +50,7 @@ The objects are represented by an icon and a circle with a radius equal to the a
   
 Controls at the screen top right:
 - field to search objects by name. You can use wildcards in the file search style: ? - any single character, * - any characters. Tap the name in the list to locate the object.  
+- button for copying a track in GeoJSON format to the clipboard.   
 - button to display the message history. The message in the bottom right of the screen is visible for a few seconds. The next message overlaps the previous one.  
 - button to fit all objects into the screen.  
 - button for centering the map according to your own location.  

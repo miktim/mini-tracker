@@ -3,7 +3,10 @@ TODO:
 - Android: I/VideoCapabilities: Unsupported profile 4 for video/mp4v-es (NoSleep.min.js) Back to NoSleep.old?
 - show track nodes as list
 - ?do not starts tracking of expired object
-- ?center map to first created object
+- ?center map to the first created object
+- remove Ok event, add object Delete[d] event/action
+- the track copy button is visible when the track exists.
+
 1.4.8
 - fixed stop/delete track methods for track copying
 1.4.7
